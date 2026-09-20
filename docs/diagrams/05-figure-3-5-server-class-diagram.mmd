@@ -1,0 +1,65 @@
+classDiagram
+    class AuthController
+    class UserController
+    class FeedController
+    class PostController
+    class SpaceController
+    class EventController
+    class ConversationController
+    class MessageController
+    class RealtimeController
+    class MediaController
+    class ReportController
+
+    class OTPService {
+        +issueChallenge()
+        +consumeChallenge()
+    }
+    class TokenService {
+        +startSession()
+        +rotateSession()
+        +revokeFamily()
+    }
+    class AccountService
+    class FeedService
+    class PostService
+    class SpaceService
+    class EventService
+    class ConversationService
+    class MessageService
+    class NotificationService
+    class ReportService
+    class ImageProcessor {
+        +process(Data) ProcessedImage
+    }
+
+    class UserRecord
+    class OTPChallengeRecord
+    class AuthSessionRecord
+    class PostRecord
+    class SpaceRecord
+    class EventRecord
+    class ConversationRecord
+    class MessageRecord
+
+    AuthController --> OTPService
+    AuthController --> TokenService
+    AuthController --> AccountService
+    FeedController --> FeedService
+    PostController --> PostService
+    SpaceController --> SpaceService
+    EventController --> EventService
+    ConversationController --> ConversationService
+    MessageController --> MessageService
+    MediaController --> ImageProcessor
+    ReportController --> ReportService
+
+    OTPService --> OTPChallengeRecord
+    TokenService --> AuthSessionRecord
+    AccountService --> UserRecord
+    PostService --> PostRecord
+    SpaceService --> SpaceRecord
+    EventService --> EventRecord
+    ConversationService --> ConversationRecord
+    MessageService --> MessageRecord
+    NotificationService --> UserRecord

@@ -1,0 +1,60 @@
+graph TD
+    subgraph Presentation
+        Root["RootView<br/>App/RootView.swift"]
+        Shell["AppShellView<br/>five-tab TabView"]
+        AuthUI["SignInView · VerifyCodeView<br/>OnboardingFlowView"]
+        Feature["Feature screens<br/>Features/*"]
+        VM["@Observable view models<br/>ErrorPresenting"]
+    end
+
+    subgraph Navigation
+        Router["Router (per tab)<br/>Navigation/Router.swift"]
+        RouteEnum["Route enum<br/>Navigation/Route.swift"]
+        Dest["RouteDestinationView"]
+    end
+
+    subgraph DesignSystem["Design system"]
+        Theme["Theme<br/>colours · type · spacing · radii · shadows · motion"]
+        Components["Components/*<br/>Avatar · buttons · fields · chips · skeletons · states"]
+    end
+
+    subgraph Domain["Session and state"]
+        Session["AuthSessionStore<br/>@Observable, MainActor"]
+        Container["AppContainer<br/>Sendable, via Environment"]
+    end
+
+    subgraph Services
+        API["APIClient (actor)<br/>bearer · refresh · pagination · multipart"]
+        WS["WebSocketClient (actor)<br/>backoff 1s→30s · AsyncStream"]
+        Tokens["KeychainTokenStore (actor)"]
+        Cache["OfflineCaching"]
+        Intel["Vision + NaturalLanguage<br/>on-device only"]
+        Images["RemoteImageLoader (actor)<br/>+ BlurHash"]
+    end
+
+    Kit["IBUgramKit<br/>DTOs + Endpoint contract"]
+
+    Root --> Session
+    Root --> AuthUI
+    Root --> Shell
+    Shell --> Router
+    Shell --> Feature
+    Feature --> VM
+    Feature --> Components
+    AuthUI --> VM
+    Router --> RouteEnum
+    Router --> Dest
+    Dest --> Feature
+    Components --> Theme
+    VM --> Container
+    Session --> Container
+    Container --> API
+    Container --> WS
+    Container --> Tokens
+    Container --> Cache
+    Container --> Intel
+    Container --> Images
+    API --> Tokens
+    WS --> Tokens
+    API --> Kit
+    WS --> Kit

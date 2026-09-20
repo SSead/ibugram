@@ -1,0 +1,53 @@
+classDiagram
+    class AppContainer {
+        +api: APIRequesting
+        +tokenStore: TokenStoring
+        +realtime: WebSocketClient
+        +cache: OfflineCaching
+        +imageIntelligence: ImageIntelligenceProviding
+        +textIntelligence: TextIntelligenceProviding
+        +imageLoader: RemoteImageLoader
+        +sessionInvalidation: SessionInvalidationSignal
+    }
+
+    class AuthSessionStore {
+        +state: State
+        +signOut()
+    }
+
+    class APIClient {
+        -refreshInFlight: Task
+        +send(endpoint)
+    }
+
+    class WebSocketClient {
+        +events() AsyncStream
+        +connect()
+    }
+
+    class KeychainTokenStore {
+        +currentTokens() TokenPair
+        +save(TokenPair)
+    }
+
+    class Router {
+        +path: Route array
+        +push(Route)
+        +pop()
+    }
+
+    class VisionImageIntelligence {
+        +insight(forImageData) ImageInsight
+    }
+
+    class NaturalLanguageTextIntelligence {
+        +insight(forCaption) CaptionInsight
+    }
+
+    AppContainer --> APIClient
+    AppContainer --> WebSocketClient
+    AppContainer --> KeychainTokenStore
+    AppContainer --> VisionImageIntelligence
+    AppContainer --> NaturalLanguageTextIntelligence
+    AuthSessionStore --> AppContainer
+    Router ..> Route

@@ -1,0 +1,22 @@
+flowchart TB
+    Launch[LaunchView] --> Root{AuthSessionStore}
+    Root -->|signedOut| SignIn[SignInView]
+    SignIn --> Verify[VerifyCodeView]
+    Verify -->|needs_onboarding| Onboard[OnboardingFlowView]
+    Verify -->|signedIn| Shell[AppShellView]
+    Onboard --> Shell
+
+    Shell --> Feed[Feed tab]
+    Shell --> Search[Search tab]
+    Shell --> Create[Create sheet]
+    Shell --> Activity[Activity tab]
+    Shell --> Profile[Profile tab]
+
+    Feed --> Post[Post detail]
+    Feed --> Space[Space]
+    Feed --> Event[Event]
+    Feed --> Map[Campus map]
+    Feed --> DM[Messages]
+    Profile --> Settings[Settings]
+    Settings --> Sessions[Active sessions]
+    Settings --> Blocked[Blocked accounts]

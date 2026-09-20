@@ -1,0 +1,22 @@
+flowchart LR
+    Student["Student<br/>@stu.ibu.edu.ba"]
+    Faculty["Faculty / Staff<br/>@ibu.edu.ba"]
+    Moderator["Moderator"]
+    App["IBUgram iOS app<br/>SwiftUI · iOS 18+"]
+    API["Vapor 4 API<br/>HTTP + WebSocket<br/>/api/v1"]
+    DB[(PostgreSQL 14)]
+    Media["MediaStore<br/>on-disk JPEG + thumbnails"]
+    Mail["EmailSender<br/>OTP delivery"]
+    Cal["EventKit<br/>device calendar"]
+    Map["MapKit<br/>campus map"]
+
+    Student --> App
+    Faculty --> App
+    Moderator --> App
+    App -->|"REST Bearer JWT"| API
+    App -->|"WS ?token="| API
+    App --> Cal
+    App --> Map
+    API --> DB
+    API --> Media
+    API --> Mail

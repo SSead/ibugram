@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant A as Sender iOS
+    participant S as Vapor MessageController
+    participant DB as PostgreSQL
+    participant RT as RealtimeBroadcaster
+    participant B as Recipient iOS
+
+    B->>RT: GET /api/v1/ws?token=… (upgrade)
+    B->>RT: subscribe_conversation
+    A->>S: POST /conversations/:id/messages { body, client_id }
+    S->>DB: INSERT messages UNIQUE (conversation_id, client_id)
+    S->>DB: bump unread_count for other participants
+    S->>RT: message_created
+    RT-->>B: ServerFrame message_created
+    B->>B: decodePayload(as: Message)
+    B->>RT: mark_read
+    RT-->>A: message_read

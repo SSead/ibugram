@@ -1,0 +1,18 @@
+flowchart TD
+    Start([Feed appears]) --> Task[viewModel.load]
+    Task --> Cache{OfflineCaching<br/>has page?}
+    Cache -->|yes| ShowCached[Render cached posts]
+    Cache -->|no| Skeleton[PostCardSkeleton]
+    ShowCached --> Network
+    Skeleton --> Network[API GET /feed/following]
+    Network --> Result{Result}
+    Result -->|Page| Store[cache.store]
+    Store --> Loaded[phase = loaded]
+    Result -->|offline| Banner[Network-state banner]
+    Banner --> Keep[Keep cached / empty]
+    Result -->|APIError| Error[ErrorStateView + retry]
+    Loaded --> AppearLast{Last row onAppear?}
+    AppearLast -->|yes| Next[GET with cursor]
+    Next --> Result
+    Loaded --> Pull[pull-to-refresh]
+    Pull --> Network

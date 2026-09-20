@@ -1,0 +1,378 @@
+erDiagram
+    USERS ||--o{ AUTH_SESSIONS : "signs in with"
+    USERS ||--o{ MEDIA : uploads
+    USERS }o--o| MEDIA : "avatar"
+    USERS ||--o{ POSTS : authors
+    USERS ||--o{ COMMENTS : writes
+    USERS ||--o{ POST_LIKES : likes
+    USERS ||--o{ COMMENT_LIKES : likes
+    USERS ||--o{ SAVES : saves
+    USERS ||--o{ FOLLOWS : follows
+    USERS ||--o{ BLOCKS : blocks
+    USERS ||--o{ MENTIONS : "is mentioned in"
+    USERS ||--o{ SPACE_MEMBERSHIPS : joins
+    USERS ||--o{ SPACES : creates
+    USERS ||--o{ EVENTS : hosts
+    USERS ||--o{ EVENT_RSVPS : rsvps
+    USERS ||--o{ CONVERSATIONS : creates
+    USERS ||--o{ CONVERSATION_PARTICIPANTS : "takes part in"
+    USERS ||--o{ MESSAGES : sends
+    USERS ||--o{ MESSAGE_READS : reads
+    USERS ||--o{ NOTIFICATIONS : receives
+    USERS ||--o{ NOTIFICATION_ACTORS : "acts in"
+    USERS ||--o{ REPORTS : files
+    USERS ||--o{ REPORTS : "is reported in"
+
+    AUTH_SESSIONS ||--o| AUTH_SESSIONS : "rotated into"
+
+    POSTS ||--o{ POST_MEDIA : "shows"
+    MEDIA ||--o{ POST_MEDIA : "appears in"
+    POSTS ||--o{ POST_HASHTAGS : "tagged with"
+    HASHTAGS ||--o{ POST_HASHTAGS : "tags"
+    POSTS ||--o{ COMMENTS : "has"
+    POSTS ||--o{ POST_LIKES : "receives"
+    POSTS ||--o{ SAVES : "is saved as"
+    POSTS ||--o{ MENTIONS : "mentions"
+    POSTS ||--o{ REPORTS : "is reported as"
+    POSTS }o--o| SPACES : "posted into"
+    POSTS }o--o| EVENTS : "posted about"
+    POSTS }o--o| PLACES : "tagged at"
+
+    COMMENTS ||--o{ COMMENTS : "replies to"
+    COMMENTS ||--o{ COMMENT_LIKES : "receives"
+    COMMENTS ||--o{ MENTIONS : "mentions"
+    COMMENTS ||--o{ REPORTS : "is reported as"
+
+    SPACES ||--o{ SPACE_MEMBERSHIPS : "has"
+    SPACES ||--o{ POSTS : "contains"
+    SPACES ||--o{ EVENTS : "hosts"
+    SPACES }o--o| MEDIA : "avatar and banner"
+
+    PLACES ||--o{ EVENTS : "hosts"
+    PLACES ||--o{ POSTS : "locates"
+
+    EVENTS ||--o{ EVENT_RSVPS : "collects"
+
+    CONVERSATIONS ||--o{ CONVERSATION_PARTICIPANTS : "includes"
+    CONVERSATIONS ||--o{ MESSAGES : "carries"
+    CONVERSATIONS }o--o| MESSAGES : "last message"
+    CONVERSATIONS }o--o| MEDIA : "avatar"
+    CONVERSATION_PARTICIPANTS }o--o| MESSAGES : "last read"
+    MESSAGES ||--o{ MESSAGE_MEDIA : "attaches"
+    MEDIA ||--o{ MESSAGE_MEDIA : "attached to"
+    MESSAGES ||--o{ MESSAGE_READS : "read by"
+
+    NOTIFICATIONS ||--o{ NOTIFICATION_ACTORS : "grouped from"
+    NOTIFICATIONS }o--o| POSTS : "about"
+    NOTIFICATIONS }o--o| COMMENTS : "about"
+    NOTIFICATIONS }o--o| SPACES : "about"
+    NOTIFICATIONS }o--o| EVENTS : "about"
+
+    OTP_CHALLENGES {
+        uuid id PK
+        text email
+        text code_hash
+        bigint attempt_count
+        timestamptz expires_at
+        timestamptz consumed_at
+        text requested_ip
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    USERS {
+        uuid id PK
+        text email UK
+        text username UK
+        text display_name
+        text bio
+        text role
+        text department
+        bigint year_of_study
+        boolean is_verified
+        boolean is_moderator
+        boolean is_suspended
+        uuid avatar_media_id FK
+        timestamptz last_seen_at
+        bigint post_count
+        bigint follower_count
+        bigint following_count
+        tsvector search_vector
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    AUTH_SESSIONS {
+        uuid id PK
+        uuid user_id FK
+        uuid family_id
+        text token_hash UK
+        text device_name
+        text user_agent
+        text ip_address
+        timestamptz expires_at
+        timestamptz last_used_at
+        timestamptz revoked_at
+        text revoked_reason
+        uuid replaced_by_id FK
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    FOLLOWS {
+        uuid id PK
+        uuid follower_id FK
+        uuid followee_id FK
+        timestamptz created_at
+    }
+
+    BLOCKS {
+        uuid id PK
+        uuid blocker_id FK
+        uuid blocked_id FK
+        timestamptz created_at
+    }
+
+    MEDIA {
+        uuid id PK
+        uuid uploaded_by_id FK
+        text storage_key UK
+        text thumbnail_storage_key
+        text content_type
+        bigint byte_size
+        bigint width
+        bigint height
+        text alt_text
+        text blurhash
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    POSTS {
+        uuid id PK
+        uuid author_id FK
+        uuid space_id FK
+        uuid event_id FK
+        uuid place_id FK
+        text caption
+        boolean comments_enabled
+        boolean is_archived
+        bigint like_count
+        bigint comment_count
+        tsvector search_vector
+        timestamptz edited_at
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    POST_MEDIA {
+        uuid id PK
+        uuid post_id FK
+        uuid media_id FK
+        bigint position
+        timestamptz created_at
+    }
+
+    HASHTAGS {
+        uuid id PK
+        text tag UK
+        bigint post_count
+        timestamptz created_at
+    }
+
+    POST_HASHTAGS {
+        uuid id PK
+        uuid post_id FK
+        uuid hashtag_id FK
+        timestamptz created_at
+    }
+
+    MENTIONS {
+        uuid id PK
+        uuid post_id FK
+        uuid comment_id FK
+        uuid user_id FK
+        timestamptz created_at
+    }
+
+    COMMENTS {
+        uuid id PK
+        uuid post_id FK
+        uuid author_id FK
+        uuid parent_id FK
+        text body
+        bigint like_count
+        bigint reply_count
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    POST_LIKES {
+        uuid id PK
+        uuid post_id FK
+        uuid user_id FK
+        timestamptz created_at
+    }
+
+    COMMENT_LIKES {
+        uuid id PK
+        uuid comment_id FK
+        uuid user_id FK
+        timestamptz created_at
+    }
+
+    SAVES {
+        uuid id PK
+        uuid user_id FK
+        uuid post_id FK
+        text collection_name
+        timestamptz created_at
+    }
+
+    SPACES {
+        uuid id PK
+        text slug UK
+        text name
+        text description
+        text kind
+        text visibility
+        boolean is_official
+        uuid avatar_media_id FK
+        uuid banner_media_id FK
+        uuid created_by_id FK
+        bigint member_count
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    SPACE_MEMBERSHIPS {
+        uuid id PK
+        uuid space_id FK
+        uuid user_id FK
+        text role
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    PLACES {
+        uuid id PK
+        text name
+        double latitude
+        double longitude
+        boolean is_campus_location
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    EVENTS {
+        uuid id PK
+        text title
+        text description
+        timestamptz starts_at
+        timestamptz ends_at
+        uuid place_id FK
+        bigint capacity
+        uuid host_id FK
+        uuid space_id FK
+        bigint going_count
+        bigint interested_count
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    EVENT_RSVPS {
+        uuid id PK
+        uuid event_id FK
+        uuid user_id FK
+        text status
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    CONVERSATIONS {
+        uuid id PK
+        text kind
+        text title
+        uuid avatar_media_id FK
+        uuid created_by_id FK
+        text direct_key UK
+        uuid last_message_id FK
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    CONVERSATION_PARTICIPANTS {
+        uuid id PK
+        uuid conversation_id FK
+        uuid user_id FK
+        bigint unread_count
+        boolean has_accepted
+        uuid last_read_message_id FK
+        timestamptz muted_at
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    MESSAGES {
+        uuid id PK
+        uuid conversation_id FK
+        uuid sender_id FK
+        text body
+        uuid client_id
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    MESSAGE_MEDIA {
+        uuid id PK
+        uuid message_id FK
+        uuid media_id FK
+        bigint position
+        timestamptz created_at
+    }
+
+    MESSAGE_READS {
+        uuid id PK
+        uuid message_id FK
+        uuid user_id FK
+        timestamptz read_at
+        timestamptz created_at
+    }
+
+    NOTIFICATIONS {
+        uuid id PK
+        uuid recipient_id FK
+        text kind
+        text group_key
+        bigint group_count
+        uuid post_id FK
+        uuid comment_id FK
+        uuid space_id FK
+        uuid event_id FK
+        boolean is_read
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    NOTIFICATION_ACTORS {
+        uuid id PK
+        uuid notification_id FK
+        uuid user_id FK
+        timestamptz created_at
+    }
+
+    REPORTS {
+        uuid id PK
+        uuid reporter_id FK
+        text subject
+        uuid post_id FK
+        uuid comment_id FK
+        uuid subject_user_id FK
+        text reason
+        text detail
+        text status
+        uuid handled_by_id FK
+        timestamptz handled_at
+        timestamptz created_at
+        timestamptz updated_at
+    }

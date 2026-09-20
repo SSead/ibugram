@@ -1,0 +1,30 @@
+sequenceDiagram
+    actor User
+    participant Composer as ComposerView
+    participant Vision as VisionImageIntelligence
+    participant NL as NaturalLanguageTextIntelligence
+    participant API as APIClient
+    participant Media as MediaController
+    participant Posts as PostController
+    participant Store as MediaStore
+    participant DB as PostgreSQL
+
+    User->>Composer: pick images (max 10)
+    Composer->>Vision: insight(forImageData)
+    Vision-->>Composer: suggestedAltText, sceneLabels
+    User->>Composer: edit alt text, caption, Space, place
+    Composer->>NL: insight(forCaption)
+    NL-->>Composer: suggested hashtags, language, sentiment
+    loop each image
+        Composer->>API: POST /media (multipart)
+        API->>Media: file + optional alt_text
+        Media->>Media: ImageProcessor (EXIF strip, JPEG, thumbnail)
+        Media->>Store: write blobs
+        Media->>DB: INSERT media
+        Media-->>Composer: Media DTO
+    end
+    Composer->>API: POST /posts { media_ids, caption, space_id?, place? }
+    API->>Posts: authorize, validate
+    Posts->>DB: INSERT posts, post_media, hashtags, mentions
+    Posts-->>Composer: Post
+    Composer-->>User: dismiss sheet, feed reloads

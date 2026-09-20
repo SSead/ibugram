@@ -1,0 +1,13 @@
+flowchart TB
+    subgraph Repo [sdp repository]
+        Kit[IBUgramKit<br/>DTOs · Endpoint · errors · constants]
+        iOS[ibugram-ios<br/>SwiftUI app + tests]
+        Server[ibugram-server<br/>Vapor executable + AppTests]
+        Docs[docs/<br/>contract · schema · decisions]
+    end
+
+    iOS --> Kit
+    Server --> Kit
+    iOS -.->|implements| Docs
+    Server -.->|implements| Docs
+    Kit -.->|generated from| Docs

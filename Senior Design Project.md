@@ -58,23 +58,23 @@ It is approved that this final work has been written in compliance with the form
 
 # **ABSTRACT** {#abstract}
 
-IBUgram is a closed, photo-centric social network for the International Burch University community. Membership is restricted to university mailboxes: `@stu.ibu.edu.ba` for students and `@ibu.edu.ba` for faculty and staff. Inside that boundary the product behaves like a familiar campus feed — posts, profiles, a social graph, search, notifications and direct messages — and adds three capabilities a general-purpose network does not offer a university: Spaces (clubs, departments and courses), Campus Events (RSVP, map and calendar), and on-device content intelligence (Vision alt-text and Natural Language hashtag suggestion).
+IBUgram is a closed, photo-centric social network for the International Burch University community. Membership is restricted to university mailboxes: `@stu.ibu.edu.ba` for students and `@ibu.edu.ba` for faculty and staff. Inside that boundary the product works like a familiar campus feed: posts, profiles, a social graph, search, notifications and direct messages. It also adds three features that a general-purpose network does not give a university: Spaces (clubs, departments and courses), Campus Events (RSVP, map and calendar), and on-device content intelligence (Vision alt-text and Natural Language hashtag suggestion).
 
-The system is a native iOS 18 client written in Swift 6 and SwiftUI, and a self-hosted Vapor 4 server backed by PostgreSQL 14. A shared Swift package, `IBUgramKit`, compiles the wire contract — data-transfer objects, error codes, endpoint paths and authentication constants — into both sides so the client and server cannot silently diverge. Authentication is passwordless email one-time passcode (OTP) exchanged for a short-lived JSON Web Token (JWT) access token and a rotating refresh token. Realtime delivery uses a WebSocket for messages, presence, typing and live notifications.
+The system is a native iOS 18 client written in Swift 6 and SwiftUI, and a self-hosted Vapor 4 server backed by PostgreSQL 14. A shared Swift package, `IBUgramKit`, holds the wire contract: data-transfer objects, error codes, endpoint paths and authentication constants. Both the client and the server compile that package, so they cannot silently diverge. Authentication is passwordless email one-time passcode (OTP) exchanged for a short-lived JSON Web Token (JWT) access token and a rotating refresh token. Realtime delivery uses a WebSocket for messages, presence, typing and live notifications.
 
-The architectural choice that shapes the rest of the work is the rejection of Firebase. A 2023 prototype used Firebase Authentication, Cloud Firestore and Google Sign-In. This project replaces that stack with an owned relational schema, an owned test harness, and a single-language full stack. The Senior Design Project requires an entity-relationship model and demonstrable unit, integration and system tests; a self-owned PostgreSQL schema and Vapor test suite satisfy both directly.
+The main architectural choice is to reject Firebase. A 2023 prototype used Firebase Authentication, Cloud Firestore and Google Sign-In. This project replaces that stack with an owned relational schema, an owned test harness, and a single-language full stack. The Senior Design Project requires an entity-relationship model and unit, integration and system tests that can be shown. A PostgreSQL schema owned by this project, plus a Vapor test suite, satisfy both.
 
-The author's personal engineering objective is equally explicit. The author is an experienced Android and React Native developer who had not previously shipped a native iOS application. IBUgram exists to close that gap: Swift 6 strict concurrency, SwiftUI, SwiftData's intended cache seam, Vision, Natural Language, MapKit, EventKit and WidgetKit as a product specification, implemented as a real campus product rather than a tutorial clone.
+The author's personal engineering objective is also clear. The author is an experienced Android and React Native developer who had not previously shipped a native iOS application. IBUgram exists to close that gap. The product specification includes Swift 6 strict concurrency, SwiftUI, SwiftData's intended cache seam, Vision, Natural Language, MapKit, EventKit and WidgetKit. They are implemented as a real campus product, not as a tutorial clone.
 
 **Keywords:** Social Networking, SwiftUI, Swift 6, Vapor, PostgreSQL, University Community, OTP, WebSocket.
 
 # **ACKNOWLEDGMENTS** {#acknowledgments}
 
-I thank International Burch University and the Department of Information Technologies for the undergraduate programme that made this project possible, and for a campus community specific enough to be worth building for. I am grateful to my mentor for guidance on scope, on the difference between a portfolio demo and a defensible engineering argument, and on keeping the report honest about what was built.
+I thank International Burch University and the Department of Information Technologies for the undergraduate programme that made this project possible, and for a campus community that is specific enough to be worth building for. I am grateful to my mentor for guidance on scope, on the difference between a portfolio demo and an argument that can be defended at the defence, and on keeping the report accurate about what was built.
 
 I also thank the authors of the public documentation this work rests on: Apple's Swift, SwiftUI, Vision, Natural Language and Human Interface Guidelines; the Vapor and Fluent projects; and the PostgreSQL manual. Those sources are cited in the references.
 
-Finally I thank my family for patience during a project that occupied evenings and weekends, and the classmates who were willing to talk through whether a university social network was a product worth making.
+Finally I thank my family for patience during a project that occupied evenings and weekends, and the classmates who were willing to discuss whether a university social network was a product worth making.
 
 # **DECLARATION** {#declaration}
 
@@ -302,33 +302,33 @@ Figure 4.17b Campus map (dark)
 
 1. ## **Background** {#background}
 
-International Burch University is a small, bilingual campus in Sarajevo. Students, faculty and staff already live on general-purpose social networks, but those networks were not designed around a university membership boundary. Anyone with a phone can join them. There is no first-class notion of a department, a course, a student club or a campus place. Official notices compete with whatever the ranking function happens to surface. Events are posters in corridors, messages in informal group chats, and calendar entries that never make it into a shared view of the week.
+International Burch University is a small, bilingual campus in Sarajevo. Students, faculty and staff already live on general-purpose social networks, but those networks were not designed around a university membership boundary. Anyone with a phone can join them. There is no first-class notion of a department, a course, a student club or a campus place. Official notices compete with whatever the ranking algorithm happens to show. Events are posters in corridors, messages in informal group chats, and calendar entries that never appear in a shared view of the week.
 
-A general-purpose network cannot solve that problem by adding a hashtag. Hashtags are not membership. They do not prove that the person posting is a student or a member of staff. They do not give a faculty member a distinct capability to create an official Space or to publish an event to the whole campus. They do not give a moderator a queue. They do not keep a visitor from outside the university from reading, posting or messaging.
+A general-purpose network cannot solve that problem by adding a hashtag. Hashtags are not membership. They do not prove that the person posting is a student or a member of staff. They do not give a faculty member a distinct way to create an official Space or to publish an event to the whole campus. They do not give a moderator a queue. They do not stop a visitor from outside the university from reading, posting or messaging.
 
-IBUgram starts from that observation. The product is not "Instagram, but with the university logo". It is a closed network whose first rule is the email domain. Only `@ibu.edu.ba` and `@stu.ibu.edu.ba` addresses may hold an account. Role is derived from that domain: students on the student subdomain, faculty and staff on the staff domain, with an automatic verified badge for faculty. Inside the boundary the interaction model is familiar on purpose — a photo feed, profiles, follows, comments, saves and direct messages — because the cost of inventing a new social vocabulary would be paid by the same people the product is trying to serve. The university-specific work sits on top of that vocabulary: Spaces, Campus Events, a campus map, and on-device analysis that never sends a photo off the phone in order to describe it.
+IBUgram starts from that observation. The product is not "Instagram, but with the university logo". It is a closed network whose first rule is the email domain. Only `@ibu.edu.ba` and `@stu.ibu.edu.ba` addresses may hold an account. Role is derived from that domain: students on the student subdomain, faculty and staff on the staff domain, with an automatic verified badge for faculty. Inside the boundary the interaction model is familiar on purpose: a photo feed, profiles, follows, comments, saves and direct messages. Inventing a new social vocabulary would cost the same people the product is trying to serve. The university-specific work sits on top of that vocabulary: Spaces, Campus Events, a campus map, and on-device analysis that never sends a photo off the phone in order to describe it.
 
-A 2023 prototype of the same product idea existed in this repository as a baseline. It used Firebase Authentication, Cloud Firestore and Google Sign-In. That prototype demonstrated that a SwiftUI shell could be stood up, but it could not produce the artefacts this degree programme asks for: a relational schema, a testable service layer, and a self-contained defence. The work reported here replaces that prototype rather than extending it.
+A 2023 prototype of the same product idea existed in this repository as a baseline. It used Firebase Authentication, Cloud Firestore and Google Sign-In. That prototype showed that a SwiftUI shell could be built, but it could not produce the artefacts this degree programme asks for: a relational schema, a testable service layer, and a defence that does not depend on an external vendor. The work reported here replaces that prototype rather than extending it.
 
 2. ## **Objective** {#objective}
 
-The project has two objectives, and they are both binding.
+The project has two objectives. Both are required.
 
-The **product objective** is to deliver a closed, verified campus network for International Burch University. Membership is proven by control of a university mailbox, not by a post-hoc check on an OAuth identity. The v1.0 surface is specified in `docs/00-PRODUCT-SPEC.md`: identity and access, two feeds, posts and comments, profiles and the social graph, search, direct messaging, notifications, Spaces, Campus Events, on-device intelligence, an offline-readable cache, and accessibility and polish including VoiceOver, Dynamic Type and dark mode. Explicitly out of scope for v1.0 are Stories, Reels, video posts, advertising, and public unauthenticated access.
+The **product objective** is to deliver a closed, verified campus network for International Burch University. Membership is proven by control of a university mailbox, not by a later check on an OAuth identity. The v1.0 surface is specified in `docs/00-PRODUCT-SPEC.md`: identity and access, two feeds, posts and comments, profiles and the social graph, search, direct messaging, notifications, Spaces, Campus Events, on-device intelligence, an offline-readable cache, and accessibility and polish including VoiceOver, Dynamic Type and dark mode. Explicitly out of scope for v1.0 are Stories, Reels, video posts, advertising, and public unauthenticated access.
 
-The **personal engineering objective** is to ship a native iOS application as a developer whose production experience is Android and React Native. That sentence is the honest framing of the technology choices. Swift 6 strict concurrency, SwiftUI's declarative layout, Keychain-backed session storage, an `actor`-isolated `APIClient`, Vision and Natural Language running on the device, MapKit and EventKit, and a Vapor server written in the same language as the client are not fashionable selections. They are the curriculum the author needed. A React Native client talking to Firebase would have been faster to assemble and would have taught almost nothing the author did not already know. The report therefore treats the move to native iOS and to server-side Swift as part of the contribution, not as an implementation detail.
+The **personal engineering objective** is to ship a native iOS application as a developer whose production experience is Android and React Native. That sentence is how the technology choices should be read. The stack includes Swift 6 strict concurrency, SwiftUI's declarative layout, Keychain-backed session storage, an `actor`-isolated `APIClient`, Vision and Natural Language running on the device, MapKit and EventKit, and a Vapor server written in the same language as the client. These were not chosen because they are popular. They are the curriculum the author needed. A React Native client talking to Firebase would have been faster to assemble and would have taught almost nothing the author did not already know. The report therefore treats the move to native iOS and to server-side Swift as part of the contribution, not as a detail of implementation.
 
 3. ## **Significance of the Project** {#significance-of-the-project}
 
-The significance of IBUgram is threefold.
+IBUgram has three kinds of significance.
 
-First, it consolidates campus content. Posts, Spaces, events and geo-tagged campus places share one feed, one search index and one notification stream. A robotics club announcement, a career-fair RSVP and a photo from the lawn are not three different apps.
+First, it brings campus content into one place. Posts, Spaces, events and geo-tagged campus places share one feed, one search index and one notification stream. A robotics club announcement, a career-fair RSVP and a photo from the lawn are not three different apps.
 
-Second, it enforces verified identity. Domain-restricted OTP is the membership test. Faculty accounts carry a verified badge derived from the staff domain. Official Spaces can be created only by faculty. That is a different privacy and trust posture from an open network, and it is the reason the product can offer campus-wide Discover ranking without inviting the public internet onto the campus lawn.
+Second, it enforces verified identity. Domain-restricted OTP is the membership test. Faculty accounts carry a verified badge derived from the staff domain. Official Spaces can be created only by faculty. That is a different privacy and trust model from an open network. It is also why the product can offer campus-wide Discover ranking without opening the campus lawn to the public internet.
 
-Third, it keeps content intelligence on the device. Alt-text generation and scene classification run through Vision at compose time. Hashtag suggestion, language identification and a sentiment score used as a soft ranking signal run through Natural Language. No image leaves the phone for analysis. The privacy claim is therefore architectural rather than policy: the bytes are never sent to an inference service, so they cannot be retained by one.
+Third, it keeps content intelligence on the device. Alt-text generation and scene classification run through Vision at compose time. Hashtag suggestion, language identification and a sentiment score used as a soft ranking signal run through Natural Language. No image leaves the phone for analysis. The privacy claim is therefore architectural, not a policy promise. The bytes are never sent to an inference service, so they cannot be stored by one.
 
-The engineering significance sits beside the product significance. The shared `IBUgramKit` package, the 28-table PostgreSQL schema with trigger-maintained counters, refresh-token families with reuse detection, and cursor pagination are the parts of the work that would transfer to another campus or another closed community. They are also the parts a Firebase prototype could not exhibit at a defence.
+The engineering significance sits beside the product significance. The shared `IBUgramKit` package, the 28-table PostgreSQL schema with trigger-maintained counters, refresh-token families with reuse detection, and cursor pagination are the parts of the work that would transfer to another campus or another closed community. They are also the parts a Firebase prototype could not show at a defence.
 
 4. ## **Structure of the Paper** {#structure-of-the-paper}
 
@@ -346,7 +346,7 @@ The engineering significance sits beside the product significance. The shared `I
 | References | Primary platform documentation and related literature |
 | Appendices | API reference, schema, test inventory, build instructions |
 
-The remainder of the paper follows that order. Chapter 2 is the requirements and trade-off chapter; it is where decision D-001 is defended. Chapter 3 is the design chapter and owns every diagram. Chapter 4 is the implementation chapter and owns the screenshots. Chapter 5 reports tests that exist in the repository and the commands that reproduce them; it does not invent pass counts or timings. Chapter 6 treats the system as something that must be operated after the defence. Chapter 7 is brief on purpose.
+The remainder of the paper follows that order. Chapter 2 covers requirements and trade-offs. Decision D-001 is defended there. Chapter 3 is the design chapter and contains every diagram. Chapter 4 is the implementation chapter and contains the screenshots. Chapter 5 reports tests that exist in the repository and the commands that reproduce them. It does not invent pass counts or timings. Chapter 6 treats the system as something that must be operated after the defence. Chapter 7 is short on purpose.
 
 2. # **SYSTEM ANALYSIS** {#system-analysis}
 
@@ -366,7 +366,7 @@ IBUgram is a three-part system: a native iPhone application, a Vapor HTTP and We
 | Media | Server-side storage with on-disk blob store behind a `MediaStore` protocol |
 | Local persistence | Cache seam (`OfflineCaching`) with a file-system implementation; SwiftData outbox specified as the replacement |
 
-The product specification locks the in-scope feature set and is equally explicit about what is out of scope for v1.0:
+The product specification locks the in-scope feature set. It is also clear about what is out of scope for v1.0:
 
 - Stories
 - Reels
@@ -376,7 +376,7 @@ The product specification locks the in-scope feature set and is equally explicit
 
 Those exclusions are product decisions, not unfinished work. A Stories surface would require a different media pipeline, a different retention model and a different notification load. Video would require transcoding the project does not own. Advertising would invert the membership rule. Public access would destroy the closed-community claim.
 
-The specification also names four P1 "standout" areas that distinguish the product from a generic clone: Spaces, Campus Events, on-device intelligence, and offline-first behaviour, plus system extensions (WidgetKit and App Intents). Chapter 4 reports what was implemented in the repository against that list. App Intents ship in the main application target ("What's happening at Burch?", "Post to IBUgram"). A WidgetKit extension was not added: it would have required a new native target and `project.pbxproj` surgery on a synchronized-file-group project, which was deferred rather than risked.
+The specification also names four P1 "standout" areas that separate the product from a generic clone: Spaces, Campus Events, on-device intelligence, and offline-first behaviour, plus system extensions (WidgetKit and App Intents). Chapter 4 reports what was implemented in the repository against that list. App Intents ship in the main application target ("What's happening at Burch?", "Post to IBUgram"). A WidgetKit extension was not added. It would have required a new native target and `project.pbxproj` surgery on a synchronized-file-group project. That work was deferred rather than risked.
 
 2.2 ## **Actors and capabilities** {#actors-and-capabilities}
 
@@ -391,7 +391,7 @@ Four actors appear in the product specification. Three of them are people; one i
 | Moderator | Flag on account | Review reports, hide content, suspend accounts |
 | System | — | OTP delivery, notification fan-out, feed ranking, event reminders |
 
-The student/faculty split is derived from the email domain at account creation. It is not a self-serve role picker. The moderator flag is an account attribute (`users.is_moderator`) rather than a separate identity provider. The system actor does not hold an account; it is the set of services that issue OTPs, group notifications, rank the Discover feed and remind attendees of events.
+The student/faculty split is derived from the email domain at account creation. It is not a self-serve role picker. The moderator flag is an account attribute (`users.is_moderator`) rather than a separate identity provider. The system actor does not hold an account. It is the set of services that issue OTPs, group notifications, rank the Discover feed and remind attendees of events.
 
 Use-case coverage by actor is summarised in Figure 3.2. The important permission boundaries, which later become authorization tests, are:
 
@@ -447,15 +447,15 @@ Source: product specification §5.
 | NFR-7 | Swift 6 strict concurrency enabled, zero warnings |
 | NFR-8 | VoiceOver can complete every primary user journey |
 
-NFR-4 is implemented as constants in `IBUgramKit` (`otpLifetime = 600`, `otpMaxAttempts = 5`) and enforced by `OTPService`. NFR-3 is a deployment requirement: development talks to `http://127.0.0.1:8080` with App Transport Security exceptions for local networking; production must terminate TLS. NFR-1 and NFR-2 are stated with a method in Chapter 5; this repository does not contain recorded p95 timings, so none are reported.
+NFR-4 is implemented as constants in `IBUgramKit` (`otpLifetime = 600`, `otpMaxAttempts = 5`) and enforced by `OTPService`. NFR-3 is a deployment requirement: development talks to `http://127.0.0.1:8080` with App Transport Security exceptions for local networking; production must terminate TLS. NFR-1 and NFR-2 are stated with a method in Chapter 5. This repository does not contain recorded p95 timings, so none are reported.
 
 2.5 ## **Feasibility** {#feasibility}
 
-**Technical.** The stack is conventional on each side and unusual only in that both sides are Swift. iOS 18, SwiftUI and Swift 6 are the current native baseline. Vapor 4, Fluent and PostgreSQL are a documented, testable server stack. Vision and Natural Language ship with the operating system, which is why on-device intelligence has zero marginal server cost. WebSockets are a first-class Vapor feature. The remaining technical risk is not "can this be built" but "can one developer finish the P0 and P1 surface in the time available". That risk is accepted in §2.6.
+**Technical.** The stack is conventional on each side and unusual only in that both sides are Swift. iOS 18, SwiftUI and Swift 6 are the current native baseline. Vapor 4, Fluent and PostgreSQL are a documented, testable server stack. Vision and Natural Language ship with the operating system. That is why on-device intelligence has no extra server cost. WebSockets are a first-class Vapor feature. The remaining technical risk is not "can this be built" but "can one developer finish the P0 and P1 surface in the time available". That risk is accepted in §2.6.
 
 **Schedule.** The work was sequenced in five phases documented in `docs/03-TEAM-AND-PROCESS.md`: repository and contract; shared package plus server foundation plus iOS architecture; backend and iOS feature groups in parallel; standout features; integration, seeded data, screenshots and this report. Phase 1 is the critical path, because nothing downstream can start until the contract compiles and the app builds. Git history on `main` matches that sequence: baseline and spec, iOS foundation (Firebase removed), backend foundation (schema, auth, media), iOS feature modules, backend feature groups, contract unification and populated screenshots, then Spaces, Events, map and messaging wired into navigation.
 
-**Economic.** A managed backend (Firebase in the 2023 prototype) is cheap at campus scale until the day the project must be reproduced by a committee that does not have the author's console login. A self-hosted Vapor process plus PostgreSQL on a laptop is free for development and defence. Deployment cost, if the university later hosts the server, is a virtual machine and a managed Postgres instance — an operating expense, not a per-seat SaaS bill. The trade-off given up is managed push infrastructure: Apple Push Notification service (APNs) requires a paid Apple Developer account, which this project does not have. Live notifications are therefore delivered in-app over the WebSocket while the app is connected. That is a product limitation with an architectural seam behind it, not an accidental omission.
+**Economic.** A managed backend (Firebase in the 2023 prototype) is cheap at campus scale. The problem appears when a committee must reproduce the project and does not have the author's console login. A self-hosted Vapor process plus PostgreSQL on a laptop is free for development and defence. If the university later hosts the server, the deployment cost is a virtual machine and a managed Postgres instance. That is an operating expense, not a per-seat SaaS bill. The trade-off given up is managed push infrastructure. Apple Push Notification service (APNs) requires a paid Apple Developer account, which this project does not have. Live notifications are therefore delivered in-app over the WebSocket while the app is connected. That is a product limitation. The architecture already has a seam for a later push transport; it is not an accidental omission.
 
 2.6 ## **Constraints, risks and mitigations** {#constraints-risks-and-mitigations}
 
@@ -471,7 +471,7 @@ NFR-4 is implemented as constants in `IBUgramKit` (`otpLifetime = 600`, `otpMaxA
 | Shared PostgreSQL test database | Concurrent Swift Testing suites would collide | `ExclusiveDatabaseAccess` actor serialises tests; schema prepared once per process. |
 | English stemming mangles Bosnian | Search quality | Full-text search uses PostgreSQL `simple`, not `english`. |
 
-The honest constraint is the first one. A defence that claimed production push notifications would be a claim the author cannot demonstrate. The report therefore does not claim them.
+The first constraint is the one that matters most at a defence. Production push notifications cannot be demonstrated. The report therefore does not claim them.
 
 2.7 ## **Success criteria** {#success-criteria}
 
@@ -487,21 +487,21 @@ Source: product specification §6.
 | 4 | Every P0 and P1 feature is reachable from the UI. |
 | 5 | `Senior Design Project.md` is complete with diagrams and screenshots. |
 
-Criterion 5 is this document. Criteria 1–2 are reproduced by the commands in Appendix C and D; pass/fail output is not fabricated here. Criterion 3 is evidenced by the populated screenshots in `docs/screenshots/` (the `1x-*` series) and by `swift run App seed` against `ibugram_dev` (12 users, 15 posts, 4 spaces, 3 events; primary login `amina.hodzic@stu.ibu.edu.ba`). Criterion 4 is true of the P0 surface and of Spaces, Events, map, messaging, Vision/Natural Language services, the file-backed offline feed cache, and App Intents; it is not true of a WidgetKit extension target.
+Criterion 5 is this document. Criteria 1–2 are reproduced by the commands in Appendix C and D. Pass/fail output is not invented here. Criterion 3 is shown by the populated screenshots in `docs/screenshots/` (the `1x-*` series) and by `swift run App seed` against `ibugram_dev` (12 users, 15 posts, 4 spaces, 3 events; primary login `amina.hodzic@stu.ibu.edu.ba`). Criterion 4 is true of the P0 surface and of Spaces, Events, map, messaging, Vision/Natural Language services, the file-backed offline feed cache, and App Intents. It is not true of a WidgetKit extension target.
 
 2.8 ## **Comparison against Firebase (decision D-001)** {#comparison-against-firebase-decision-d-001}
 
 Decision D-001, dated 2026-09-20, replaces Firebase entirely with a Vapor 4 service backed by PostgreSQL 14 and a shared `IBUgramKit` package.
 
-The 2023 prototype used Firebase Auth, Firestore and Google Sign-In. That is a reasonable stack for a weekend demo. It is the wrong stack for this degree project, for four reasons that were recorded when the decision was taken and that still hold.
+The 2023 prototype used Firebase Auth, Firestore and Google Sign-In. That is a reasonable stack for a weekend demo. It is the wrong stack for this degree project. Four reasons were recorded when the decision was taken, and they still hold.
 
-**1. The report requires an entity-relationship model and test results.** Chapter 3 must present an ER diagram of the database. Chapter 5 must present unit, integration and system tests. Firestore is a schemaless document store. There is no ER diagram of a collection group that a committee can mark, and there is no owned integration-test harness that starts from `DROP SCHEMA public CASCADE` and rebuilds 28 tables. A relational schema with 34 reversible Fluent migrations, CHECK constraints, GIN indexes and trigger-maintained counters is an artefact. A Firebase console is an account.
+**1. The report requires an entity-relationship model and test results.** Chapter 3 must present an ER diagram of the database. Chapter 5 must present unit, integration and system tests. Firestore is a schemaless document store. There is no ER diagram of a collection group that a committee can mark. There is also no owned integration-test harness that starts from `DROP SCHEMA public CASCADE` and rebuilds 28 tables. A relational schema with 34 reversible Fluent migrations, CHECK constraints, GIN indexes and trigger-maintained counters is an artefact. A Firebase console is an account.
 
-**2. The build must be self-contained.** Firebase ties the project to a console that cannot be provisioned or verified reproducibly. A committee member who clones the repository cannot create the author's Firebase project, cannot rotate the author's API keys, and cannot inspect security rules without that login. A Vapor process and a local Postgres database have no such dependency. `.env.example` is the entire operations surface for development.
+**2. The build must be self-contained.** Firebase ties the project to a console that cannot be set up or verified in a reproducible way. A committee member who clones the repository cannot create the author's Firebase project, cannot rotate the author's API keys, and cannot inspect security rules without that login. A Vapor process and a local Postgres database have no such dependency. `.env.example` is the entire operations surface for development.
 
-**3. Domain-restricted passwordless auth is a first-class requirement.** The membership rule is "you hold an `@ibu.edu.ba` or `@stu.ibu.edu.ba` mailbox". Proving control of that mailbox *is* the membership test. Implementing OTP, hashing the code with Bcrypt, throttling issuance, consuming the challenge once, and issuing a rotating refresh token is straightforward in an owned service. Bending Google Sign-In to enforce a university domain after the fact is a post-hoc check on an identity the product does not control, and it reintroduces a password (or an OAuth round-trip) the security analysis is trying to eliminate.
+**3. Domain-restricted passwordless auth is a first-class requirement.** The membership rule is "you hold an `@ibu.edu.ba` or `@stu.ibu.edu.ba` mailbox". Proving control of that mailbox *is* the membership test. Implementing OTP, hashing the code with Bcrypt, throttling issuance, consuming the challenge once, and issuing a rotating refresh token is straightforward in an owned service. Bending Google Sign-In to enforce a university domain after the fact is a later check on an identity the product does not control. It also brings back a password, or an OAuth round-trip, that the security analysis is trying to remove.
 
-**4. One language is the engineering narrative.** The author is demonstrating native iOS competence and, in the same move, server-side Swift. DTOs that compile on both sides make a class of production defect — the client sending a field the server renamed last Tuesday — a compile error. That is a stronger story at a defence than "the iOS app talks to a Google document store through a generated SDK".
+**4. One language is the engineering argument.** The author is demonstrating native iOS competence and, at the same time, server-side Swift. DTOs that compile on both sides make a class of production defect — the client sending a field the server renamed last Tuesday — a compile error. That is a stronger argument at a defence than "the iOS app talks to a Google document store through a generated SDK".
 
 *Table 2.6 Firebase versus Vapor + PostgreSQL*
 
@@ -518,7 +518,7 @@ The 2023 prototype used Firebase Auth, Firestore and Google Sign-In. That is a r
 
 **What was given up.** Managed hosting, free push infrastructure, and one-tap Google SSO. Push is the costly one, and it is mitigated rather than ignored: the client already has a `WebSocketClient` actor with exponential backoff, and the server already fans out `notification_created` and `unread_count_changed` frames. SSO convenience is mitigated by a 60-day rotating refresh token, so a student authenticates with email roughly twice a year rather than every launch.
 
-Decision D-002 (OTP instead of Google Sign-In) is the auth half of the same argument and is not repeated here except to note that removing password storage from the system simplifies Chapter 6. Decision D-003 (iOS 18, Swift 6) is the client half of the personal objective. Decision D-004 (synchronized Xcode file groups) is a process decision: a project that grows past a hundred Swift files cannot be maintained by hand-editing `project.pbxproj`. Decision D-005 (Discover ranking) is discussed with the feed implementation.
+Decision D-002 (OTP instead of Google Sign-In) is the auth half of the same argument. It is not repeated here, except to note that removing password storage from the system simplifies Chapter 6. Decision D-003 (iOS 18, Swift 6) is the client half of the personal objective. Decision D-004 (synchronized Xcode file groups) is a process decision: a project that grows past a hundred Swift files cannot be maintained by hand-editing `project.pbxproj`. Decision D-005 (Discover ranking) is discussed with the feed implementation.
 
 The remainder of this paper assumes D-001. There is no Firebase dependency in the iOS project or the server package.
 
@@ -553,7 +553,7 @@ flowchart LR
     API --> Mail
 ```
 
-The iOS app is the only interactive client. It talks to the server over REST for CRUD and over a WebSocket for live frames. MapKit and EventKit are on-device frameworks; they do not go through the API. OTP mail is a server port (`EmailSender`); in development the implementation is `ConsoleEmailSender`, which prints the code and, in the development environment only, the `request-code` response may include `debug_code`.
+The iOS app is the only interactive client. It talks to the server over REST for CRUD and over a WebSocket for live frames. MapKit and EventKit are on-device frameworks; they do not go through the API. OTP mail is a server port (`EmailSender`). In development the implementation is `ConsoleEmailSender`, which prints the code. In the development environment only, the `request-code` response may include `debug_code`.
 
 3.2 ## **Use cases** {#use-cases}
 
@@ -594,7 +594,7 @@ flowchart TB
     FacultyUC --> StudentUC
 ```
 
-Faculty inherit every student use case. The two additional faculty use cases are the ones the server enforces with role checks rather than with UI hiding: official Spaces and campus-wide events. Moderators additionally handle reports. The system use cases have no interactive actor.
+Faculty inherit every student use case. The two extra faculty use cases are official Spaces and campus-wide events. The server enforces those with role checks, not only by hiding UI. Moderators also handle reports. The system use cases have no interactive actor.
 
 3.3 ## **Client architecture** {#client-architecture}
 
@@ -665,7 +665,7 @@ graph TD
     WS --> Kit
 ```
 
-There are no singletons. Every service is reached through one `Sendable` `AppContainer` injected via the SwiftUI environment. `AppContainer.live()` wires real services; `AppContainer.preview()` wires `MockAPIClient`, `InMemoryTokenStore`, `NullOfflineCache` and stub intelligence, so every `#Preview` works without a network. Launch arguments `-ibugram-mock-api YES` and `-ibugram-auth-state signed-in|onboarding|signed-out` are how UI tests and screenshot capture run without a backend.
+There are no singletons. Every service is reached through one `Sendable` `AppContainer` injected via the SwiftUI environment. `AppContainer.live()` wires real services. `AppContainer.preview()` wires `MockAPIClient`, `InMemoryTokenStore`, `NullOfflineCache` and stub intelligence, so every `#Preview` works without a network. Launch arguments `-ibugram-mock-api YES` and `-ibugram-auth-state signed-in|onboarding|signed-out` are how UI tests and screenshot capture run without a backend.
 
 `AuthSessionStore` is `@MainActor @Observable` and is the only source of truth for who is signed in: `loading`, `signedOut`, `onboarding(User)`, `signedIn(User)`. `RootView` switches on that state.
 
@@ -729,7 +729,7 @@ classDiagram
 
 3.4 ## **Server architecture** {#server-architecture}
 
-The server follows the engineering standard: controllers are thin (decode, authorize, delegate, encode); business logic lives in services; persistence lives in Fluent models. Routes are registered from `IBUgramKit.Endpoint` values so the server's route table and the client's URL builder stay identical.
+The server follows the engineering standard. Controllers are thin (decode, authorize, delegate, encode). Business logic lives in services. Persistence lives in Fluent models. Routes are registered from `IBUgramKit.Endpoint` values so the server's route table and the client's URL builder stay identical.
 
 *Figure 3.5 Server class diagram*
 
@@ -801,13 +801,13 @@ classDiagram
     NotificationService --> UserRecord
 ```
 
-`configure(_:)` loads `AppConfiguration`, installs `APIErrorMiddleware`, connects PostgreSQL, registers HMAC JWT keys, constructs `AppServices`, registers 34 migrations, and mounts controllers under `/api/v1`. Auth routes additionally sit behind `RateLimitMiddleware` (30 requests / 60 seconds). Authenticated routes use `AccessTokenAuthenticator`, which verifies the JWT *and* requires the session family to still have a live row (Amendment 1.2): logout and reuse detection take effect immediately rather than at access-token expiry.
+`configure(_:)` loads `AppConfiguration`, installs `APIErrorMiddleware`, connects PostgreSQL, registers HMAC JWT keys, constructs `AppServices`, registers 34 migrations, and mounts controllers under `/api/v1`. Auth routes additionally sit behind `RateLimitMiddleware` (30 requests / 60 seconds). Authenticated routes use `AccessTokenAuthenticator`. It verifies the JWT and also requires the session family to still have a live row (Amendment 1.2). Logout and reuse detection therefore take effect immediately, not at access-token expiry.
 
 3.5 ## **Entity-relationship model** {#entity-relationship-model}
 
 The schema is 28 tables created by 34 reversible Fluent migrations. Primary keys are application-generated UUIDs. Enumerations are `text` plus `CHECK` constraints rather than native PostgreSQL enums, because adding a value to a native enum cannot run in the same transaction as the code that uses it. The raw values are exactly the strings in the API contract, so `IBUgramKit` decodes a column without mapping.
 
-The diagram below is copied from `docs/10-DATA-MODEL.md`. It is the binding ER diagram for this project.
+The diagram below is copied from `docs/10-DATA-MODEL.md`. It is the ER diagram this project uses.
 
 *Figure 3.6 Entity-relationship diagram*
 
@@ -1194,7 +1194,7 @@ erDiagram
 
 Column-level notes, indexes, delete rules and counter triggers are expanded in Appendix B and in §3.10 / §6.2. Two design choices are worth stating here because they show up in later chapters.
 
-`otp_challenges` has no foreign key to `users`. A code may be requested for an address that has no account yet. That is what makes the "same response whether or not the account exists" rule possible: the account is not looked up at all.
+`otp_challenges` has no foreign key to `users`. A code may be requested for an address that has no account yet. That is what makes the "same response whether or not the account exists" rule possible. The account is not looked up at all.
 
 `conversations.direct_key` holds the two participant UUIDs sorted and joined. It is what makes "open a DM with this person" idempotent without locking the participants table. Group conversations leave it `NULL`, and nulls do not collide in a unique index.
 
@@ -1271,7 +1271,7 @@ sequenceDiagram
     Composer-->>User: dismiss sheet, feed reloads
 ```
 
-Vision never receives a network client. The image bytes used for classification are the local picker data. The bytes that later go to `POST /media` are the upload, processed on the server into JPEG without EXIF. Those are two different copies of the photo, and only the second leaves the device.
+Vision does not receive a network client. The image bytes used for classification are the local picker data. The bytes that later go to `POST /media` are the upload. The server processes them into JPEG without EXIF. Those are two different copies of the photo. Only the second leaves the device.
 
 *Figure 3.9 Sequence — realtime message delivery over WebSocket*
 
@@ -1295,7 +1295,7 @@ sequenceDiagram
     RT-->>A: message_read
 ```
 
-The `client_id` is the offline outbox key. A retry with the same id returns the original row instead of a duplicate. Any gap after a disconnect is reconciled by refetching over REST; the socket is not a source of truth.
+The `client_id` is the offline outbox key. A retry with the same id returns the original row instead of a duplicate. Any gap after a disconnect is filled by refetching over REST. The socket is not a source of truth.
 
 3.7 ## **Activity and communication** {#activity-and-communication}
 
@@ -1322,7 +1322,7 @@ flowchart TD
     Pull --> Network
 ```
 
-The shipped cache is `FileSystemOfflineCache`, a JSON-on-disk actor behind the `OfflineCaching` protocol. The architecture document states that the offline-first team replaces that implementation with SwiftData plus a durable outbox; callers depend only on the protocol. Message send already has an in-memory outbox keyed by `client_id` (see §4.5). A SwiftData-backed outbox for posts, likes and comments is specified (FR-17) and is not a separate persistence module in the tree.
+The shipped cache is `FileSystemOfflineCache`, a JSON-on-disk actor behind the `OfflineCaching` protocol. The architecture document states that the offline-first team replaces that implementation with SwiftData plus a durable outbox. Callers depend only on the protocol. Message send already has an in-memory outbox keyed by `client_id` (see §4.5). A SwiftData-backed outbox for posts, likes and comments is specified (FR-17). It is not a separate persistence module in the tree.
 
 The communication diagram for a like is the same objects as the sequence, numbered:
 
@@ -1336,7 +1336,7 @@ The communication diagram for a like is the same objects as the sequence, number
 8. `NotificationService.raise(.like, …)`  
 9. `RealtimeBroadcaster` → `notification_created` to the author  
 
-If step 4 returns an error, the view model rolls the optimistic state back and presents `PresentedError` with retry when `APIError.isRetryable`.
+If step 4 returns an error, the view model rolls the optimistic state back. It then presents `PresentedError` with retry when `APIError.isRetryable`.
 
 3.8 ## **Component and navigation design** {#component-and-navigation-design}
 
@@ -1358,7 +1358,7 @@ flowchart TB
     Kit -.->|generated from| Docs
 ```
 
-The iOS app is one Xcode project (`objectVersion` 77, synchronized file groups) with three targets: `ibugram`, `ibugramTests`, `ibugramUITests`. The server is a Swift package depending on Vapor, Fluent, FluentPostgresDriver, JWT and `IBUgramKit`. Feature teams do not invent navigation. One `Route` enum is the vocabulary; one `Router` per tab holds `path: [Route]`; one `RouteDestinationView` switch maps cases to views.
+The iOS app is one Xcode project (`objectVersion` 77, synchronized file groups) with three targets: `ibugram`, `ibugramTests`, `ibugramUITests`. The server is a Swift package depending on Vapor, Fluent, FluentPostgresDriver, JWT and `IBUgramKit`. Feature teams do not invent navigation. One `Route` enum is the vocabulary. One `Router` per tab holds `path: [Route]`. One `RouteDestinationView` switch maps cases to views.
 
 *Table 3.1 Client navigation routes*
 
@@ -1407,19 +1407,19 @@ flowchart TB
 
 3.9 ## **API design rationale** {#api-design-rationale}
 
-The contract (`docs/01-API-CONTRACT.md` plus three amendments on 2026-09-20) is frozen. Server and client teams do not negotiate; they implement the document. Three design choices are worth defending.
+The contract (`docs/01-API-CONTRACT.md` plus three amendments on 2026-09-20) is frozen. Server and client teams do not negotiate; they implement the document. Three design choices need a short argument.
 
-**Cursor pagination, not offsets.** List endpoints take `?limit=20&cursor=` and return `{ items, next_cursor }`. Offset pagination is unstable under inserts: a new post at the top of the Following feed shifts every subsequent page, so a client that asks for `offset=20` after a refresh double-sees or skips. Keyset cursors are stable. Discover ranking (decision D-005) is even less offset-friendly, because the cursor is against the ranked row, not against `created_at` alone.
+**Cursor pagination, not offsets.** List endpoints take `?limit=20&cursor=` and return `{ items, next_cursor }`. Offset pagination is unstable under inserts. A new post at the top of the Following feed shifts every later page. A client that asks for `offset=20` after a refresh then sees the same item twice, or skips one. Keyset cursors are stable. Discover ranking (decision D-005) is even less suitable for offsets, because the cursor is against the ranked row, not against `created_at` alone.
 
 The Discover score is:
 
 `score = exp(−age_hours / 36) × (1 + ln(1 + likes) + 1.6 ln(1 + comments)) × department_boost`
 
-Department boost is 1.3 when author and viewer share a department, else 1.0. Tie-break is `created_at DESC`, then `id DESC`. A 36-hour half-life matches campus checking cadence. Comments outrank likes because they take more effort. Same-department affinity is the university-specific signal a generic clone would not have. Collaborative filtering was given up because it needs production traffic this project does not have.
+Department boost is 1.3 when author and viewer share a department, else 1.0. Tie-break is `created_at DESC`, then `id DESC`. A 36-hour half-life matches how often people check a campus feed. Comments outrank likes because they take more effort. Same-department affinity is the university-specific signal a generic clone would not have. Collaborative filtering was given up because it needs production traffic this project does not have.
 
-**A shared DTO package.** `IBUgramKit` is compiled into both binaries. Wire keys are `snake_case`; Swift properties are `camelCase` via a shared coding strategy. Error codes, OTP constants, allowed domains, page-size limits and endpoint path templates live in one module. The alternative is two handwritten copies of `Post` and a weekly integration bug. The cost of the package showed up anyway: four iOS feature teams defined local DTOs before the kit compiled, and the feed card could not render Space, Event or location chips. Amendment 2.3 made those fields mandatory. The later unification commit deleted the duplicates.
+**A shared DTO package.** `IBUgramKit` is compiled into both binaries. Wire keys are `snake_case`; Swift properties are `camelCase` via a shared coding strategy. Error codes, OTP constants, allowed domains, page-size limits and endpoint path templates live in one module. The alternative is two handwritten copies of `Post` and a weekly integration bug. That cost still appeared during the project: four iOS feature teams defined local DTOs before the kit compiled, and the feed card could not render Space, Event or location chips. Amendment 2.3 made those fields mandatory. The later unification commit deleted the duplicates.
 
-**The error envelope.** Every non-2xx response is `{ error: { code, message, details } }`. `code` is stable and machine-readable. The client maps it to localized copy and never displays `message` verbatim except as a fallback for an unrecognized code. Clients branch on `code`, never on status alone; Amendment 1 then pinned the status mapping so logs and tests still have a numeric handle.
+**The error envelope.** Every non-2xx response is `{ error: { code, message, details } }`. `code` is stable and machine-readable. The client maps it to localized copy. It never displays `message` as-is, except as a fallback for an unrecognized code. Clients branch on `code`, never on status alone. Amendment 1 then pinned the status mapping so logs and tests still have a numeric value to match.
 
 *Table 3.2 Canonical API error codes and HTTP statuses*
 
@@ -1440,19 +1440,19 @@ Department boost is 1.3 when author and viewer share a department, else 1.0. Tie
 
 3.10 ## **Security design** {#security-design}
 
-**OTP hashing.** The plaintext code exists in memory long enough to send, and in the development log / `debug_code` field. The row stores a Bcrypt hash. Verification uses `Bcrypt.verify`. Attempt count dies at 5; expiry is 10 minutes; issuance is throttled to one per 60 seconds and five per hour per address. Outstanding challenges are consumed when a new one is issued, so only the latest code is live.
+**OTP hashing.** The plaintext code exists in memory long enough to send, and in the development log / `debug_code` field. The row stores a Bcrypt hash. Verification uses `Bcrypt.verify`. The attempt counter stops at 5. Expiry is 10 minutes. Issuance is throttled to one per 60 seconds and five per hour per address. Outstanding challenges are consumed when a new one is issued, so only the latest code is live.
 
-**Token rotation.** Access tokens are JWTs (HMAC-SHA256) with a 15-minute lifetime. Claims include `sub`, `exp`, `iat`, `jti` (the `auth_sessions.id`), `sfm` (session family) and `role`. Refresh tokens are opaque, stored as SHA-256 hashes, valid 60 days, and rotated on every use. Rotation inserts a new row and marks the old one `revoked_reason = rotated`, so the table is an append-only audit trail. Presenting a token whose row is already `rotated` means two holders have the same token: the whole family is revoked with `reuse_detected`. The authenticator also requires the family to still have a live row, so logout is immediate.
+**Token rotation.** Access tokens are JWTs (HMAC-SHA256) with a 15-minute lifetime. Claims include `sub`, `exp`, `iat`, `jti` (the `auth_sessions.id`), `sfm` (session family) and `role`. Refresh tokens are opaque, stored as SHA-256 hashes, valid 60 days, and rotated on every use. Rotation inserts a new row and marks the old one `revoked_reason = rotated`, so the table is an append-only audit trail. Presenting a token whose row is already `rotated` means two holders have the same token. The whole family is then revoked with `reuse_detected`. The authenticator also requires the family to still have a live row, so logout is immediate.
 
 **Domain enforcement.** `IBUgram.allowedEmailDomains` is the single allow-list. The client validates before enabling "Send me a code"; the server rejects `domain_not_allowed` regardless. Role is derived from the domain, not from a form field.
 
-**Media.** Uploads are capped at 10 MB, accepted as JPEG/PNG/HEIC, re-encoded to JPEG through ImageIO so EXIF (including GPS) is not copied into the stored file, and served as a processed rendition plus a thumbnail.
+**Media.** Uploads are capped at 10 MB and accepted as JPEG/PNG/HEIC. They are re-encoded to JPEG through ImageIO so EXIF (including GPS) is not copied into the stored file. The stored result is a processed rendition plus a thumbnail.
 
 **Authorization.** Every route is authenticated unless it is on the documented public list (`request-code`, `verify-code`, `refresh`, health, username availability). Suspended accounts fail the authenticator. Faculty-only official Spaces return 403. Capacity RSVP uses `SELECT … FOR UPDATE` so two concurrent `going` requests cannot both succeed at the last seat.
 
 **Rate limiting.** Auth routes have a dedicated limiter. OTP throttling is a second, tighter limit keyed on email.
 
-**Known gaps**, recorded so Chapter 6 does not have to pretend they are closed: APNs is not delivered; TLS is a deployment concern (development is plaintext localhost); the development `debug_code` must not ship; `conversation_participants.unread_count` is application-maintained rather than trigger-maintained; a WidgetKit extension target is unimplemented (App Intents are in the main target).
+**Known gaps**, listed here so Chapter 6 can treat them as open. APNs is not delivered. TLS is a deployment concern (development is plaintext localhost). The development `debug_code` must not ship. `conversation_participants.unread_count` is application-maintained rather than trigger-maintained. A WidgetKit extension target is unimplemented (App Intents are in the main target).
 
 *Table 3.3 Foreign-key delete behaviour (summary)*
 
@@ -1460,7 +1460,7 @@ Department boost is 1.3 when author and viewer share a department, else 1.0. Tie
 | --- | --- | --- |
 | Account → sessions, posts, comments, likes, follows, messages, notifications | CASCADE | Deleting an account must remove that person's contributions. Anything left is a privacy problem. |
 | Account → `spaces.created_by_id`, group `conversations.created_by_id`, `reports.handled_by_id` | SET NULL | Provenance, not ownership. A club outlives its founder. |
-| Account → `events.host_id` | CASCADE | A hostless event has no one to answer for it. |
+| Account → `events.host_id` | CASCADE | An event without a host has no one responsible for it. |
 | Space / event / place → posts | SET NULL | A post survives its tag being removed. Cascading would silently destroy user content. |
 | Post → media blobs | none (join row cascades) | Blob deletion is a retryable background job so a failed unlink cannot fail a user's delete. |
 
@@ -1505,7 +1505,7 @@ Counters live in PostgreSQL triggers, not in Swift, because cascades and `psql` 
 | WidgetKit | Home-screen widget | Not present. Deferred: new extension target would require `pbxproj` surgery. |
 | SwiftData | Specified cache/outbox | Callers use `OfflineCaching`; shipped implementation is JSON-on-disk. |
 
-The author's prior stack was Android and React Native. The justification for SwiftUI over a cross-platform client is the personal objective in §1.2: this project is the native iOS education. The justification for Vapor over a Node or Go API is D-001: the shared kit only pays for itself if both sides compile Swift.
+The author's prior stack was Android and React Native. The justification for SwiftUI over a cross-platform client is the personal objective in §1.2: this project is how the author learns native iOS. The justification for Vapor over a Node or Go API is D-001: the shared kit only pays for itself if both sides compile Swift.
 
 4.2 ## **Environment and how to run the system** {#environment-and-how-to-run-the-system}
 
@@ -1553,7 +1553,7 @@ What it contains:
 - Pagination envelope `Page`.
 - WebSocket frame types.
 
-What it buys:
+What this gives the project:
 
 1. **A single source of truth.** If the contract adds a field, it is added once. The alternative was observed in progress notes: local `Post` types that omitted `space`, `event` and `location`, so the feed card could not render chips.
 2. **Compile-time coupling.** The server registers routes with `app.on(API.someEndpoint, use:)`. The client builds URLs from the same path templates (and from typed `Endpoint` wrappers that reference kit DTOs). A renamed path is a failed compile, not a 404 in production.
@@ -1562,13 +1562,13 @@ What it buys:
 
 The package is not a networking stack. `APIClient` stays in the app because token storage, refresh coalescing and multipart encoding are client concerns. The kit describes the wire; the actor implements it.
 
-Amendments 1–3 to the contract were ratified after foundation work. A1.4 added username availability, media thumbnails and reports. A2 pinned search and notification body shapes the client had already assumed. A3 recorded that `Event.postId` is derived (oldest post with that `event_id`) because the `events` table has no `post_id` column, and that `IBUgramKit.ReportBody` briefly disagreed with `POST /reports` until aligned. Those notes are part of the engineering record, not errata to hide.
+Amendments 1–3 to the contract were accepted after foundation work. A1.4 added username availability, media thumbnails and reports. A2 pinned search and notification body shapes the client had already assumed. A3 recorded that `Event.postId` is derived (oldest post with that `event_id`) because the `events` table has no `post_id` column, and that `IBUgramKit.ReportBody` briefly disagreed with `POST /reports` until aligned. Those notes are part of the engineering record. They are not mistakes to hide.
 
 4.4 ## **Feature walkthrough** {#feature-walkthrough}
 
 Screenshots live in `docs/screenshots/`. Two series exist and must not be confused.
 
-The `01`–`06` series was captured during iOS foundation: sign-in, dark sign-in, the tab shell while feature modules were still placeholders, onboarding, and OTP verification. Figure 4.5 still shows the placeholder Feed tab ("Owned by Feed & Posts") and is included because it documents the shell that later screens replace.
+The `01`–`06` series was captured during iOS foundation: sign-in, dark sign-in, the tab shell while feature modules were still placeholders, onboarding, and OTP verification. Figure 4.5 still shows the placeholder Feed tab ("Owned by Feed & Posts"). It is included because it documents the shell that later screens replace.
 
 The `1x-*` series was captured later by `ScreenshotCaptureUITests` into the same directory, in light and dark, after the client was unified on `IBUgramKit` and the feed, composer, profile, search, activity, messages, Spaces, Events and map were wired. Fixture copy in those shots is demo data (Amina Hodžić, Leila Marković, Prof. Dr. Damir Kovač, IBU Robotics, Robotics open lab). Image pixels are blurred placeholders, which is what the screenshot harness recorded.
 
@@ -1599,25 +1599,25 @@ All twenty-six files in `docs/screenshots/` are embedded below. Onboarding and O
 
 ![Sign in, light appearance](docs/screenshots/01-ios-sign-in-light.png)
 
-The unauthenticated screen states the membership rule in the field caption: only `@ibu.edu.ba` and `@stu.ibu.edu.ba` addresses can join. The primary button stays disabled until `EmailDomainValidator` returns `.allowed`. Footer copy states that there are no passwords and that the code expires in 10 minutes, which matches `IBUgram.otpLifetime`. Chips preview Spaces, Campus events and Messages without offering a guest path — there is no public browse.
+The unauthenticated screen states the membership rule in the field caption: only `@ibu.edu.ba` and `@stu.ibu.edu.ba` addresses can join. The primary button stays disabled until `EmailDomainValidator` returns `.allowed`. Footer copy states that there are no passwords and that the code expires in 10 minutes, which matches `IBUgram.otpLifetime`. Chips preview Spaces, Campus events and Messages. There is no guest path and no public browse.
 
 *Figure 4.2 Sign in (dark)*
 
 ![Sign in, dark appearance](docs/screenshots/02-ios-sign-in-dark.png)
 
-Dark mode is not an invert. Brand navy `#003A6D` lifts to `#5B9BE5` on `#0B0F14` so the mark stays legible. Colour assets are 19 sets with explicit light and dark appearances.
+Dark mode is not an invert. Brand navy `#003A6D` becomes `#5B9BE5` on `#0B0F14` so the mark stays legible. Colour assets are 19 sets with explicit light and dark appearances.
 
 *Figure 4.3 OTP verification (light)*
 
 ![Verify code, light appearance](docs/screenshots/06-ios-verify-code-light.png)
 
-`OneTimeCodeField` is six boxed digits over one hidden field so paste, autofill and `.oneTimeCode` work. The development build surfaces "Use development code 482913" because the mock/API development path exposes `debug_code`; that affordance is absent in production. Resend is time-gated (`otpResendInterval = 60`). Verify stays disabled until six digits are present.
+`OneTimeCodeField` is six boxed digits over one hidden field so paste, autofill and `.oneTimeCode` work. The development build shows "Use development code 482913" because the mock/API development path exposes `debug_code`. That option is not present in production. Resend is time-gated (`otpResendInterval = 60`). Verify stays disabled until six digits are present.
 
 *Figure 4.4 Onboarding (light)*
 
 ![Onboarding, light appearance](docs/screenshots/05-ios-onboarding-light.png)
 
-Onboarding collects username, display name, optional avatar, department and year of study. Helper text for the username explains mention syntax. `needs_onboarding` is the only completion signal (Amendment 1.3): the server may already have assigned a placeholder `user_<prefix>` username, so a populated `User.username` does not mean the student finished this screen.
+Onboarding collects username, display name, optional avatar, department and year of study. Helper text for the username explains mention syntax. `needs_onboarding` is the only completion signal (Amendment 1.3). The server may already have assigned a placeholder `user_<prefix>` username, so a populated `User.username` does not mean the student finished this screen.
 
 Settings, not pictured, lists active sessions (revocable), an optional biometric app lock via LocalAuthentication, appearance (system / light / dark), blocked accounts, and sign out. Tokens remain in the Keychain across those actions until logout rotates and revokes the family.
 
@@ -1627,7 +1627,7 @@ Settings, not pictured, lists active sessions (revocable), an optional biometric
 
 ![Foundation tab shell, light appearance](docs/screenshots/03-ios-tab-shell-light.png)
 
-Five tabs — Feed, Search, Create, Activity, Profile — were in place before feature teams replaced the placeholders. The Create tab is still not a destination: it presents the composer sheet and restores the previous tab. A paper-plane button in the feed header opens Messages.
+Five tabs (Feed, Search, Create, Activity, Profile) were in place before feature teams replaced the placeholders. The Create tab is still not a destination: it presents the composer sheet and restores the previous tab. A paper-plane button in the feed header opens Messages.
 
 ![Foundation tab shell, dark appearance](docs/screenshots/04-ios-tab-shell-dark.png)
 
@@ -1639,7 +1639,7 @@ Five tabs — Feed, Search, Create, Activity, Profile — were in place before f
 
 ![Following feed, light appearance](docs/screenshots/1x-feed-light.png)
 
-The Following / Discover segmented control is the two-feed requirement. "Happening now" is the Events rail (`GET /events/happening-now`): Robotics open lab on the campus lawn, Career Fair in the cafeteria. The post card shows author, relative time, and the three context chips Amendment 2.3 made mandatory — Space (IBU Robotics), Event (Robotics open lab), location (Campus lawn). The media area is a blurred placeholder in the demo dataset. The tab bar is the same shell as Figure 4.5, now filled.
+The Following / Discover segmented control is the two-feed requirement. "Happening now" is the Events rail (`GET /events/happening-now`): Robotics open lab on the campus lawn, Career Fair in the cafeteria. The post card shows author, relative time, and the three context chips Amendment 2.3 made mandatory: Space (IBU Robotics), Event (Robotics open lab), location (Campus lawn). The media area is a blurred placeholder in the demo dataset. The tab bar is the same shell as Figure 4.5, now filled.
 
 *Figure 4.7 Following feed (dark)*
 
@@ -1649,7 +1649,7 @@ The Following / Discover segmented control is the two-feed requirement. "Happeni
 
 ![Composer, light appearance](docs/screenshots/1x-composer-light.png)
 
-The composer is a sheet. Photos: up to 10, in carousel order (enforced in the schema by `UNIQUE (post_id, position)`). Caption with a 2,200-character counter and live hashtag highlighting (`#burchlife`). Optional location chips for campus places. Optional Space. Comments can be disabled. Share remains the mutating action; Cancel dismisses.
+The composer is a sheet. Photos: up to 10, in carousel order (enforced in the schema by `UNIQUE (post_id, position)`). Caption with a 2,200-character counter and live hashtag highlighting (`#burchlife`). Optional location chips for campus places. Optional Space. Comments can be disabled. Share is the action that creates the post. Cancel dismisses the sheet.
 
 *Figure 4.9 Post composer (dark)*
 
@@ -1741,7 +1741,7 @@ Event detail shows title, time window, campus place, capacity (27 of 40 going), 
 
 ![Campus map, light appearance](docs/screenshots/1x-map-light.png)
 
-MapKit region around Ilidža / International University of Sarajevo, with an event pin ("Film night"). Data comes from `GET /events/map?bbox=`. Places store latitude and longitude; the index is a btree pair, documented as adequate at campus scale.
+MapKit region around Ilidža / International University of Sarajevo, with an event pin ("Film night"). Data comes from `GET /events/map?bbox=`. Places store latitude and longitude. The index is a btree pair, which is documented as enough at campus scale.
 
 ![Campus map, dark appearance](docs/screenshots/1x-map-dark.png)
 
@@ -1852,7 +1852,7 @@ struct ImageProcessor: Sendable {
 
 5.1 ## **Strategy** {#strategy}
 
-The test pyramid as applied here is three layers, plus a manual matrix for behaviour the automated suite does not own.
+The test pyramid as applied here is three layers, plus a manual matrix for behaviour the automated suite does not cover.
 
 1. **Unit.** `IBUgramKit` coding, identity, errors, endpoints and realtime frames. Client view models and services against `MockAPIClient`. No network, no database.
 2. **Integration.** Server `AppTests` against a real PostgreSQL database (`ibugram_test`). Every suite acquires `ExclusiveDatabaseAccess` so concurrent Swift Testing workers do not truncate each other's rows. Schema is dropped and migrated once per process, then tables are emptied per test.
@@ -1860,7 +1860,7 @@ The test pyramid as applied here is three layers, plus a manual matrix for behav
 
 Engineering standard §6 requires Swift Testing for new tests, sentence-case names, a happy path and an authorization test per endpoint, and no wall-clock sleeps. UI tests remain XCTest because XCUITest is not Swift Testing.
 
-This chapter reports **tests present in source** (counted from `@Test` and `func test` as of the current tree) and **commands that reproduce a run**. It does not invent pass/fail totals or p95 timings. Where `docs/PROGRESS.md` recorded a dated snapshot, that snapshot is quoted as a snapshot.
+This chapter reports **tests present in source** (counted from `@Test` and `func test` as of the current tree) and **commands that reproduce a run**. It does not invent pass/fail totals or p95 timings. Where `docs/PROGRESS.md` recorded a dated snapshot, that snapshot is quoted as such.
 
 5.2 ## **Unit tests** {#unit-tests}
 
@@ -1877,7 +1877,7 @@ Client unit tests live in `ibugram-ios/ibugramTests/`. There are 65 `@Test` meth
 | `AppTests` (server) | `@Test` | 136 |
 | `ibugramUITests` | `func test…` | 8 |
 
-Client suites cover email-domain validation, error-envelope mapping, feed view-model loading, composer, post detail, profile, search, activity, Space join, Event RSVP, map bounding boxes, and message outbox retry. Foundation tests in `ibugramTests.swift` (19 `@Test` methods) match the progress note "19 unit + 4 UI tests" for the architecture slice; the additional 46 view-model tests arrived with feature modules.
+Client suites cover email-domain validation, error-envelope mapping, feed view-model loading, composer, post detail, profile, search, activity, Space join, Event RSVP, map bounding boxes, and message outbox retry. Foundation tests in `ibugramTests.swift` (19 `@Test` methods) match the progress note "19 unit + 4 UI tests" for the architecture slice. The additional 46 view-model tests arrived with feature modules.
 
 Example names (they are sentences, as required):
 
@@ -1894,13 +1894,13 @@ cd ibugram-ios && xcodebuild test -project ibugram.xcodeproj -scheme ibugram \
   -only-testing:ibugramTests
 ```
 
-See Appendix C for the file-level inventory. Pass/fail output of a local run is not checked into the repository; run the commands and paste the transcript.
+See Appendix C for the file-level inventory. Pass/fail output of a local run is not checked into the repository. Run the commands and paste the transcript.
 
 5.3 ## **Integration tests** {#integration-tests}
 
 Server tests use `VaporTesting` and a real Postgres. `TestHarness` creates the application with `ibugram_test`, injects `SentCodeLog` so OTP tests can read a code without a mail server, and serialises access. `AuthTests` covers request-code success, foreign-domain rejection, existence indistinguishability, throttling, verify, expiry and attempt lockout. `SessionTests` covers refresh rotation and reuse detection. `MediaTests` covers upload processing. Feature files cover feed, posts, comments, social graph, search, Spaces (including faculty-only official), Events (including capacity), reports, conversations, messages, notifications and WebSocket frames. `InfrastructureTests` (13 tests) includes schema and counter assertions against real inserts and deletes.
 
-The 2026-09-20 09:25 progress snapshot recorded "Server | 52 tests, zero warnings" at the end of the foundation phase (auth, media, schema). Feature work after that point added suites; the current tree contains 136 `@Test` methods under `ibugram-server/Tests/AppTests/`. The same progress note records that the full OTP lifecycle was verified by curl (domain rejection, throttling, refresh rotation, reuse detection kills the token family), and that faculty-only official Spaces (403) and capacity-1 RSVP overflow (409) were proven with curl on port 8092, using `SELECT … FOR UPDATE`.
+The 2026-09-20 09:25 progress snapshot recorded "Server | 52 tests, zero warnings" at the end of the foundation phase (auth, media, schema). Feature work after that point added suites; the current tree contains 136 `@Test` methods under `ibugram-server/Tests/AppTests/`. The same progress note records that the full OTP lifecycle was verified by curl (domain rejection, throttling, refresh rotation, reuse detection kills the token family). It also records that faculty-only official Spaces (403) and capacity-1 RSVP overflow (409) were proven with curl on port 8092, using `SELECT … FOR UPDATE`.
 
 Reproduce:
 
@@ -1921,7 +1921,7 @@ See Appendix C. Do not treat the 52-test foundation snapshot as the current suit
 
 `ibugramUITestsLaunchTests` captures a launch screenshot. `ScreenshotCaptureUITests` is the harness that wrote the `1x-*` files: it switches appearance, launches the mock signed-in app, waits for feed chips, and saves PNGs for feed, messages, space, event, map, post detail, search, activity, profile and composer.
 
-The outline asks for XCUITest journeys covering sign in, post, like, comment, follow and send a message. Sign-in is automated as above. Post/like/comment/follow/message are covered at view-model level against `MockAPIClient` and at integration level on the server; they are not each a separate XCUITest method in this tree. The screenshot harness does navigate feed → messages / space / event / map / post detail / search / activity / profile, which is a system-level smoke of those screens against fixtures.
+The outline asks for XCUITest journeys covering sign in, post, like, comment, follow and send a message. Sign-in is automated as above. Post/like/comment/follow/message are covered at view-model level against `MockAPIClient` and at integration level on the server. They are not each a separate XCUITest method in this tree. The screenshot harness does navigate feed → messages / space / event / map / post detail / search / activity / profile. That is a system-level smoke test of those screens against fixtures.
 
 Reproduce:
 
@@ -1954,11 +1954,11 @@ The following are not claimed as automated in this repository.
 
 NFR-1 requires a 20-post feed page under 300 ms at p95 on a reference dataset. NFR-2 requires cold launch to a rendered cached feed under 1.5 s.
 
-**Method for NFR-1.** Seed PostgreSQL with a reference set (the demo dataset used for screenshots is not a claimed reference size). From a warm server, request `GET /api/v1/feed/following?limit=20` and `GET /api/v1/feed/discover?limit=20` with a valid bearer token, 100 sequential iterations, record elapsed time, compute p95. Indexes that should dominate: `posts_author_created_idx` for Following, the ranked keyset for Discover.
+**Method for NFR-1.** Seed PostgreSQL with a reference set (the demo dataset used for screenshots is not a claimed reference size). From a warm server, request `GET /api/v1/feed/following?limit=20` and `GET /api/v1/feed/discover?limit=20` with a valid bearer token, 100 sequential iterations, record elapsed time, compute p95. Indexes expected to matter most: `posts_author_created_idx` for Following, the ranked keyset for Discover.
 
 **Method for NFR-2.** Instruments Time Profiler on the iPhone 17 Pro simulator, app launched with a populated `OfflineCaching` store and no network, measure time to first non-skeleton feed frame.
 
-**Result.** No p95 or cold-launch timings are checked into `docs/` or this report. See Appendix C rather than a fabricated number. Run the method above and attach the output if a measured figure is required for the defence.
+**Result.** No p95 or cold-launch timings are checked into `docs/` or this report. See Appendix C rather than an invented number. Run the method above and attach the output if a measured figure is required for the defence.
 
 6. # **MAINTENANCE ANALYSIS** {#maintenance-analysis}
 
@@ -1972,7 +1972,7 @@ Three documents are the onboarding path for a new contributor, in this order:
 
 Then `docs/10-DATA-MODEL.md` for anyone touching SQL, and `docs/11-IOS-ARCHITECTURE.md` for anyone touching SwiftUI. `docs/90-DECISION-LOG.md` explains why Firebase is gone, why OTP, why Swift 6, why synchronized groups, and why Discover ranks the way it does.
 
-Layering is the other maintainability mechanism. Feature view models depend on `APIRequesting`, not on `URLSession`. Controllers depend on services, not on SQL. The kit is the only shared module. Synchronized Xcode groups mean adding a file does not require a `pbxproj` edit (D-004). Migrations are additive and never edited once committed.
+Layering is the other way the code stays maintainable. Feature view models depend on `APIRequesting`, not on `URLSession`. Controllers depend on services, not on SQL. The kit is the only shared module. Synchronized Xcode groups mean adding a file does not require a `pbxproj` edit (D-004). Migrations are additive and never edited once committed.
 
 Comments are treated as a smell. The standard forbids restating code, file headers and unowned TODOs. Names carry meaning (`fetchFollowingFeed(after:)`, not `getData(c:)`).
 
@@ -1987,7 +1987,7 @@ Integrity is in the database, not in the happy-path Swift.
 - Delete rules in Table 3.3.
 - Full-text `tsvector` columns generated always, GIN indexed, `simple` configuration.
 
-Migration discipline: 34 files, reversible, last four separated (constraints, search, indexes, triggers) so an index change is a new migration rather than an edit to a table someone else owns. Amendment 1.6 froze the 28-table schema for feature teams; a genuine gap is an Owner amendment, not a quiet extra migration.
+Migration discipline: 34 files, reversible, last four separated (constraints, search, indexes, triggers) so an index change is a new migration rather than an edit to a table someone else owns. Amendment 1.6 froze the 28-table schema for feature teams. A real gap is an Owner amendment, not a quiet extra migration.
 
 6.3 ## **Security** {#security}
 
@@ -2011,17 +2011,17 @@ Input validation is through `Validatable` DTOs on mutations. Rate limiting sits 
 
 6.4 ## **Backup, restore and crash recovery** {#backup-restore-and-crash-recovery}
 
-PostgreSQL is the system of record. A defence-scale backup is `pg_dump` of `ibugram_dev` plus a copy of the `MEDIA_DIRECTORY` tree. Restore is `pg_restore` (or `psql` of a dump) and copying blobs back; then `swift run App migrate` is a no-op on an already-migrated schema. Because migrations are reversible, a failed forward migration can be rolled back with `migrate --revert` on a staging copy — not on a production database without a dump.
+PostgreSQL is the system of record. A defence-scale backup is `pg_dump` of `ibugram_dev` plus a copy of the `MEDIA_DIRECTORY` tree. Restore is `pg_restore` (or `psql` of a dump) and copying blobs back. Then `swift run App migrate` is a no-op on an already-migrated schema. Because migrations are reversible, a failed forward migration can be rolled back with `migrate --revert` on a staging copy — not on a production database without a dump.
 
-The server process is crash-safe in the usual sense: it is stateless aside from socket connections in `RealtimeRegistry`. In-flight WebSocket clients reconnect with backoff (1 s doubling to 30 s, ±20 % jitter) and re-subscribe; REST refetch fills gaps.
+The server process is crash-safe in the ordinary sense. It is stateless except for socket connections in `RealtimeRegistry`. In-flight WebSocket clients reconnect with backoff (1 s doubling to 30 s, ±20 % jitter) and re-subscribe. REST refetch fills gaps.
 
-The client Keychain item survives app deletion only if the user does not uninstall; it survives crashes. The JSON offline cache is incidental resilience: a crash mid-session still leaves the last stored feed page on disk. It is not a substitute for server backup. The in-memory message outbox is not durable across process death; that is a known gap relative to FR-17's SwiftData outbox.
+The client Keychain item survives app deletion only if the user does not uninstall. It survives crashes. The JSON offline cache also helps after a crash: a crash mid-session still leaves the last stored feed page on disk. It is not a substitute for server backup. The in-memory message outbox is not durable across process death. That is a known gap relative to FR-17's SwiftData outbox.
 
 6.5 ## **Administration and moderation** {#administration-and-moderation}
 
 There is no separate admin web app. Moderators are ordinary accounts with `is_moderator`. They review `reports` (status `open | reviewing | actioned | dismissed`), hide content and suspend accounts. `handled_by_id` SET NULL so a ticket survives a moderator leaving. The queue index is `(status, created_at DESC)`.
 
-Operational administration of the server is environment variables (Appendix D), log output from `ConsoleEmailSender` in development, and `GET /health` for process and database liveness. Session revocation is available to the user in Settings (FR-4) and to the server on reuse detection.
+Operational administration of the server uses environment variables (Appendix D), log output from `ConsoleEmailSender` in development, and `GET /health` for process and database liveness. Session revocation is available to the user in Settings (FR-4) and to the server on reuse detection.
 
 6.6 ## **Future work** {#future-work}
 
@@ -2031,17 +2031,17 @@ Operational administration of the server is environment variables (Appendix D), 
 - **Video.** Explicitly out of scope for v1.0; would require transcoding and a different `MediaStore`.
 - **Web client.** Would reuse `IBUgramKit` only if compiled for the web, which it is not; more realistically a TypeScript client generated from the same contract document.
 - **SSO against university identity.** OTP proves mailbox control; a future SAML/OIDC integration against university IdP would remove even the email round-trip, at the cost of D-002's simplicity.
-- **Analytics.** Deliberately absent. A closed campus network that also phones home needs a separate privacy review.
-- **Learned ranking.** D-005 given up collaborative filtering until there is traffic.
-- **PostGIS.** `places_coordinates_idx` is a btree pair; radius search at larger scale would replace that index only.
+- **Analytics.** Deliberately absent. A closed campus network that also sends usage data off-campus needs a separate privacy review.
+- **Learned ranking.** D-005 dropped collaborative filtering until there is traffic.
+- **PostGIS.** `places_coordinates_idx` is a btree pair. Radius search at larger scale would replace that index only.
 
 7. # **CONCLUSION** {#conclusion}
 
-IBUgram is a closed campus network with a native iOS client and an owned Swift server. The product benefit is a membership boundary that general-purpose networks do not have, plus Spaces, Events and on-device intelligence that sit on that boundary. The engineering benefit is a relational schema, a frozen contract compiled into both binaries, and a test harness that does not depend on a vendor console.
+IBUgram is a closed campus network with a native iOS client and an owned Swift server. The product benefit is a membership boundary that general-purpose networks do not have. Spaces, Events and on-device intelligence sit on that boundary. The engineering benefit is a relational schema, a frozen contract compiled into both binaries, and a test harness that does not depend on a vendor console.
 
-What the author learned moving from Android and React Native to native iOS is not a list of APIs. It is a different concurrency model (actors, `async`/`await`, Swift 6 data-race checking), a different UI model (declarative SwiftUI with a design system instead of scattered literals), and a different persistence story (Keychain, a cache protocol, EventKit and Vision as peer frameworks). What the author learned writing Vapor is that the same language on the server is only an advantage if the contract is a package, not a wiki page. Fluent migrations, trigger-maintained counters and `SELECT … FOR UPDATE` are the parts of PostgreSQL that a document store would have left as application folklore.
+What the author learned moving from Android and React Native to native iOS is not a list of APIs. It is a different concurrency model (actors, `async`/`await`, Swift 6 data-race checking), a different UI model (declarative SwiftUI with a design system instead of scattered literals), and a different persistence model (Keychain, a cache protocol, EventKit and Vision as peer frameworks). What the author learned writing Vapor is that the same language on the server is only an advantage if the contract is a package, not a wiki page. Fluent migrations, trigger-maintained counters and `SELECT … FOR UPDATE` are the parts of PostgreSQL that a document store would have left only in application code.
 
-Limitations faced honestly: a single developer; no paid Apple account, so no APNs, no TestFlight, no App Store delivery; WidgetKit extension specified and not built (App Intents were delivered in the main target instead); SwiftData outbox specified and not built (file-backed feed cache is); onboarding and OTP screens captured in light only; NFR-1 and NFR-2 not measured in this repository; XCUITest coverage of post/like/follow/message thinner than the outline's wish list; parallel iOS work produced DTO duplicates that had to be deleted. The 2023 Firebase prototype was the right first sketch and the wrong foundation.
+Limitations, stated directly. The project had a single developer. There is no paid Apple account, so no APNs, no TestFlight, and no App Store delivery. The WidgetKit extension was specified and not built (App Intents were delivered in the main target instead). The SwiftData outbox was specified and not built (the file-backed feed cache is). Onboarding and OTP screens were captured in light only. NFR-1 and NFR-2 were not measured in this repository. XCUITest coverage of post/like/follow/message is thinner than the outline's wish list. Parallel iOS work produced DTO duplicates that had to be deleted. The 2023 Firebase prototype was the right first sketch and the wrong foundation.
 
 Recommendations. For a successor student: keep the kit, keep the ER model, keep OTP. Spend the next increment on a durable outbox, APNs once an account exists, and a VoiceOver pass recorded as a video for the defence. For the university, if the app is ever hosted: TLS, a real `EmailSender`, `pg_dump` in cron, and a moderator who is not the author.
 
@@ -2233,7 +2233,7 @@ cd ibugram-server && swift run App migrate
 pg_dump -s -d ibugram_dev > schema.sql
 ```
 
-That command is the source of a physical DDL transcript; this appendix does not invent `CREATE TABLE` text that might drift from Fluent.
+That command is the source of a physical DDL transcript. This appendix does not invent `CREATE TABLE` text that might drift from Fluent.
 
 ## Appendix C — Test inventory and reproduction commands {#appendix-c--test-inventory-and-reproduction-commands}
 

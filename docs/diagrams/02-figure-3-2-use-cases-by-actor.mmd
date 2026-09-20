@@ -1,0 +1,32 @@
+flowchart TB
+    subgraph StudentUC [Student]
+        UC1[Request OTP and sign in]
+        UC2[Complete onboarding]
+        UC3[Browse Following and Discover]
+        UC4[Create, like, comment, save a post]
+        UC5[Follow, block, report]
+        UC6[Search people, tags, Spaces, posts]
+        UC7[Join a Space]
+        UC8[RSVP to an Event]
+        UC9[Direct message]
+        UC10[Read activity]
+    end
+
+    subgraph FacultyUC [Faculty]
+        UC11[Create official Space]
+        UC12[Publish campus Event]
+    end
+
+    subgraph ModUC [Moderator]
+        UC13[Review report queue]
+        UC14[Hide content / suspend account]
+    end
+
+    subgraph SysUC [System]
+        UC15[Deliver OTP]
+        UC16[Fan out notifications]
+        UC17[Rank Discover feed]
+        UC18[Event reminders]
+    end
+
+    FacultyUC --> StudentUC

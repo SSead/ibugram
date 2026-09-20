@@ -1,0 +1,31 @@
+sequenceDiagram
+    actor User
+    participant App as SignIn / VerifyCode
+    participant API as Vapor AuthController
+    participant OTP as OTPService
+    participant Mail as EmailSender
+    participant DB as PostgreSQL
+    participant Tokens as TokenService
+
+    User->>App: enter university email
+    App->>App: EmailDomainValidator
+    App->>API: POST /auth/request-code
+    API->>OTP: issueChallenge
+    OTP->>OTP: throttle 1/60s and 5/hour
+    OTP->>DB: INSERT otp_challenges (bcrypt hash)
+    OTP->>Mail: send 6-digit code
+    API-->>App: 202 expires_at, resend_after
+    User->>App: enter code
+    App->>API: POST /auth/verify-code
+    API->>OTP: consumeChallenge
+    OTP->>DB: verify hash, attempt_count, expiry
+    API->>Tokens: startSession
+    Tokens->>DB: INSERT auth_sessions (family_id, token_hash)
+    Tokens-->>API: JWT access + refresh
+    API-->>App: 200 AuthSession (needs_onboarding?)
+    App->>App: KeychainTokenStore.save
+    alt needs_onboarding
+        App-->>User: OnboardingFlowView
+    else
+        App-->>User: AppShellView
+    end
