@@ -22,19 +22,19 @@ struct RouteDestinationView: View {
         case .hashtag(let tag):
             HashtagDetailView(tag: tag)
         case .space(let slug):
-            unbuilt("Space /\(slug)", owner: "Spaces")
+            SpaceDetailView(slug: slug)
         case .spaceMembers(let slug):
-            unbuilt("Members of /\(slug)", owner: "Spaces")
+            SpaceMembersView(slug: slug)
         case .event(let id):
-            unbuilt("Event \(id.uuidString.prefix(8))", owner: "Campus Events")
+            EventDetailView(eventID: id)
         case .eventAttendees(let eventID):
-            unbuilt("Attendees of \(eventID.uuidString.prefix(8))", owner: "Campus Events")
+            EventAttendeesView(eventID: eventID)
         case .campusMap:
-            unbuilt("Campus map", owner: "Campus Events")
+            CampusMapView()
         case .conversation(let id):
-            unbuilt("Conversation \(id.uuidString.prefix(8))", owner: "Messaging")
+            ConversationThreadView(conversationID: id)
         case .messageRequests:
-            unbuilt("Message requests", owner: "Messaging")
+            ConversationListView()
         case .savedPosts:
             if let username = session.currentUser?.username {
                 ProfileView(username: username, initialTab: .saved)
@@ -104,5 +104,6 @@ private struct ChangeUsernameRouteView: View {
         RouteDestinationView(route: .space(slug: "ibu-robotics"))
     }
     .preferredColorScheme(.dark)
+    .appContainer(.preview())
     .environment(AuthSessionStore(container: .preview()))
 }

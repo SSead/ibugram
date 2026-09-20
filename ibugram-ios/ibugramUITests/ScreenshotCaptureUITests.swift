@@ -37,6 +37,37 @@ final class ScreenshotCaptureUITests: XCTestCase {
         XCTAssertTrue(feedReady, app.debugDescription)
         save(app, name: "1x-feed-\(suffix)")
 
+        capturePushedScreen(
+            app,
+            button: "Direct messages",
+            ready: { $0.navigationBars["Messages"].waitForExistence(timeout: 12) },
+            name: "1x-messages-\(suffix)"
+        )
+        capturePushedScreen(
+            app,
+            button: "Space, IBU Robotics",
+            ready: {
+                $0.navigationBars["IBU Robotics"].waitForExistence(timeout: 12)
+                    || $0.staticTexts["IBU Robotics"].waitForExistence(timeout: 2)
+            },
+            name: "1x-space-\(suffix)"
+        )
+        capturePushedScreen(
+            app,
+            button: "Event, Robotics open lab",
+            ready: {
+                $0.navigationBars["Robotics open lab"].waitForExistence(timeout: 12)
+                    || $0.staticTexts["Robotics open lab"].waitForExistence(timeout: 2)
+            },
+            name: "1x-event-\(suffix)"
+        )
+        capturePushedScreen(
+            app,
+            button: "Location, Campus lawn",
+            ready: { $0.navigationBars["Campus map"].waitForExistence(timeout: 12) },
+            name: "1x-map-\(suffix)"
+        )
+
         let comment = app.buttons["Comment"].firstMatch
         XCTAssertTrue(comment.waitForExistence(timeout: 5))
         comment.tap()
@@ -91,6 +122,21 @@ final class ScreenshotCaptureUITests: XCTestCase {
         }
         app.launch()
         return app
+    }
+
+    private func capturePushedScreen(
+        _ app: XCUIApplication,
+        button label: String,
+        ready: (XCUIApplication) -> Bool,
+        name: String
+    ) {
+        let control = app.buttons[label].firstMatch
+        guard control.waitForExistence(timeout: 6) else { return }
+        control.tap()
+        XCTAssertTrue(ready(app), "Expected \(name) after tapping \(label)")
+        save(app, name: name)
+        popIfPossible(app)
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 6))
     }
 
     private func tapTab(_ app: XCUIApplication, _ title: String) {

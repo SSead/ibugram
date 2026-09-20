@@ -11,6 +11,10 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>IBUgram adds campus events you are attending to your calendar.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>IBUgram adds campus events you are attending to your calendar.</string>
 	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
 	<string>IBUgram adds campus events you are attending to your calendar.</string>
 	<key>NSCameraUsageDescription</key>

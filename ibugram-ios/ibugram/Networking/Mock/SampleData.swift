@@ -86,6 +86,10 @@ enum SampleData {
         stubs.merge(SearchFixtures.idleStubs) { current, _ in current }
         stubs.merge(ActivityFixtures.stubs) { current, _ in current }
         stubs.merge(SettingsFixtures.stubs) { current, _ in current }
+        stubs.merge(EventFixtures.listStubs) { current, _ in current }
+        stubs.merge(SpaceFixtures.browseStubs) { current, _ in current }
+        stubs.merge(MessageFixtures.threadStubs) { current, _ in current }
+        stubs.merge(MapFixtures.stubs) { current, _ in current }
         return stubs
     }
 }

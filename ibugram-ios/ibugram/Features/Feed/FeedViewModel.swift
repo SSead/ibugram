@@ -38,17 +38,18 @@ final class FeedViewModel: ErrorPresenting {
     private let followingFeed: PagedList<Post>
     private let discoverFeed: PagedList<Post>
     private let api: any APIRequesting
-    private let happeningNow: @Sendable () -> [Event]
+    private let happeningNowOverride: (@Sendable () -> [Event])?
+    private var happeningNowItems: [Event] = []
     private var engagement: [UUID: PostEngagement] = [:]
     private var inFlightLikes: Set<UUID> = []
     private var inFlightSaves: Set<UUID> = []
 
     init(
         api: any APIRequesting,
-        happeningNow: @escaping @Sendable () -> [Event] = { FeedFixtures.happeningNow }
+        happeningNow: (@Sendable () -> [Event])? = nil
     ) {
         self.api = api
-        self.happeningNow = happeningNow
+        self.happeningNowOverride = happeningNow
         self.followingFeed = PagedList { cursor in
             try await api.send(FeedEndpoint.following(cursor: cursor))
         }
@@ -68,15 +69,17 @@ final class FeedViewModel: ErrorPresenting {
     }
 
     func happeningNowEvents() -> [Event] {
-        happeningNow()
+        happeningNowOverride?() ?? happeningNowItems
     }
 
     func load() async {
         await feed.loadFirstPageIfNeeded()
+        await refreshHappeningNowIfNeeded()
     }
 
     func reload() async {
         await feed.reload()
+        await refreshHappeningNow()
         if case .failed(let error) = feed.phase, !feed.items.isEmpty {
             present(error) { [weak self] in await self?.reload() }
         }
@@ -144,6 +147,16 @@ final class FeedViewModel: ErrorPresenting {
         case .following: followingFeed
         case .discover: discoverFeed
         }
+    }
+
+    private func refreshHappeningNowIfNeeded() async {
+        guard happeningNowOverride == nil, happeningNowItems.isEmpty else { return }
+        await refreshHappeningNow()
+    }
+
+    private func refreshHappeningNow() async {
+        guard happeningNowOverride == nil else { return }
+        happeningNowItems = (try? await api.send(EventEndpoints.HappeningNow()))?.items ?? happeningNowItems
     }
 
     private func resolved(_ post: Post) -> Post {

@@ -209,6 +209,7 @@ enum FeedFixtures {
         var stubs = SampleData.defaultStubs
         stubs["GET /feed/following"] = Paginated(items: following, nextCursor: nil)
         stubs["GET /feed/discover"] = Paginated(items: discover, nextCursor: "discover-2")
+        stubs["GET /events/happening-now"] = Paginated(items: happeningNow, nextCursor: nil)
         stubs["GET /posts/\(singleImage.id)"] = singleImage
         stubs["GET /posts/\(carousel.id)"] = carousel
         stubs["GET /posts/\(longCaption.id)"] = longCaption

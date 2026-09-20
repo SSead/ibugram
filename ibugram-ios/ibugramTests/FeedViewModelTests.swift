@@ -46,6 +46,32 @@ struct FeedViewModelPaginationTests {
         #expect(viewModel.displayPosts.count == 1)
         #expect(await api.followingLoads == 1)
     }
+
+    @Test("happening now loads from GET /events/happening-now unless a fixture is supplied")
+    func happeningNowLoadsFromAPI() async {
+        let api = FeedScriptedAPIClient(
+            pages: [nil: Paginated(items: [FeedFixtures.singleImage], nextCursor: nil)],
+            happeningNow: [FeedFixtures.openDay, FeedFixtures.careerFair]
+        )
+        let viewModel = FeedViewModel(api: api)
+
+        await viewModel.load()
+        #expect(viewModel.happeningNowEvents().map(\.id) == [FeedFixtures.openDay.id, FeedFixtures.careerFair.id])
+        #expect(await api.happeningNowLoads == 1)
+    }
+
+    @Test("a fixture happening now closure is used instead of the network")
+    func happeningNowFixtureOverridesAPI() async {
+        let api = FeedScriptedAPIClient(
+            pages: [nil: Paginated(items: [FeedFixtures.singleImage], nextCursor: nil)],
+            happeningNow: [FeedFixtures.openDay]
+        )
+        let viewModel = FeedViewModel(api: api, happeningNow: { [FeedFixtures.filmNight] })
+
+        await viewModel.load()
+        #expect(viewModel.happeningNowEvents().map(\.id) == [FeedFixtures.filmNight.id])
+        #expect(await api.happeningNowLoads == 0)
+    }
 }
 
 @Suite("Feed likes")
@@ -89,11 +115,18 @@ struct FeedViewModelLikeTests {
 
 actor FeedScriptedAPIClient: APIRequesting {
     private let pages: [String?: Paginated<Post>]
+    private let happeningNow: [Event]
     private let mutationError: ibugram.APIError?
     private(set) var followingLoads = 0
+    private(set) var happeningNowLoads = 0
 
-    init(pages: [String?: Paginated<Post>], mutationError: ibugram.APIError? = nil) {
+    init(
+        pages: [String?: Paginated<Post>],
+        happeningNow: [Event] = [],
+        mutationError: ibugram.APIError? = nil
+    ) {
         self.pages = pages
+        self.happeningNow = happeningNow
         self.mutationError = mutationError
     }
 
@@ -112,6 +145,10 @@ actor FeedScriptedAPIClient: APIRequesting {
         if let discover = endpoint as? FeedEndpoint.Discover {
             guard let page = pages[discover.cursor] else { throw ibugram.APIError.notFound }
             return try typed(page)
+        }
+        if endpoint is EventEndpoints.HappeningNow {
+            happeningNowLoads += 1
+            return try typed(Paginated(items: happeningNow, nextCursor: nil))
         }
         throw ibugram.APIError.notFound
     }
