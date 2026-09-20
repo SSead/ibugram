@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct SearchSpaceRow: View {
     let space: SpaceSummary
@@ -9,7 +10,7 @@ struct SearchSpaceRow: View {
     var body: some View {
         Button(action: onOpen) {
             HStack(spacing: theme.spacing.sm) {
-                AvatarView(url: space.avatarUrl, displayName: space.name, size: .medium)
+                AvatarView(url: space.avatarURL, displayName: space.name, size: .medium)
                 VStack(alignment: .leading, spacing: theme.spacing.hairline) {
                     HStack(spacing: theme.spacing.xxs) {
                         Text(space.name)

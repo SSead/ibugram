@@ -1,7 +1,8 @@
 import Foundation
+import IBUgramKit
 
 enum ActivityCopy {
-    static func sentence(for item: ActivityNotification) -> String {
+    static func sentence(for item: IBUgramKit.Notification) -> String {
         switch item.kind {
         case .like:
             return "\(actorPhrase(for: item)) liked your post"
@@ -25,11 +26,11 @@ enum ActivityCopy {
         }
     }
 
-    static func primaryActor(for item: ActivityNotification) -> String {
+    static func primaryActor(for item: IBUgramKit.Notification) -> String {
         item.actors.first?.displayName ?? "Someone"
     }
 
-    static func actorPhrase(for item: ActivityNotification) -> String {
+    static func actorPhrase(for item: IBUgramKit.Notification) -> String {
         let name = primaryActor(for: item)
         let others = max(item.groupCount - 1, 0)
         guard others > 0 else { return name }

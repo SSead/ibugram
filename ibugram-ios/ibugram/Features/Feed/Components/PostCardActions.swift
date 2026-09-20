@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 struct PostCardActions {
     var onLike: () -> Void = {}
@@ -9,5 +10,8 @@ struct PostCardActions {
     var onHashtag: (String) -> Void = { _ in }
     var onMention: (String) -> Void = { _ in }
     var onLikeCount: () -> Void = {}
+    var onSpace: (SpaceSummary) -> Void = { _ in }
+    var onEvent: (Event) -> Void = { _ in }
+    var onLocation: (Place) -> Void = { _ in }
     var onDelete: (() -> Void)? = nil
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct CommentComposerBar: View {
     @Binding var text: String

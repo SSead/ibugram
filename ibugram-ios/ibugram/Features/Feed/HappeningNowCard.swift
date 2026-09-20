@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct HappeningNowCard: View {
     let event: Event

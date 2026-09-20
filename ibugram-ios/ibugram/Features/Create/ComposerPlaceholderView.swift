@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct ComposerPlaceholderView: View {
     @Environment(\.theme) private var theme

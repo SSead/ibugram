@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum ProfileContentTab: String, CaseIterable, Identifiable, Sendable {
     case posts
@@ -38,9 +39,9 @@ final class ProfileViewModel: ErrorPresenting {
     private(set) var selectedTab: ProfileContentTab = .posts
     var presentedError: PresentedError?
 
-    let posts: Paginated<Post>
-    let saved: Paginated<Post>
-    let tagged: Paginated<Post>
+    let posts: PagedList<Post>
+    let saved: PagedList<Post>
+    let tagged: PagedList<Post>
 
     private let api: any APIRequesting
     private let username: String
@@ -51,26 +52,28 @@ final class ProfileViewModel: ErrorPresenting {
         api: any APIRequesting,
         username: String,
         currentUser: User?,
-        blockedAccounts: BlockedAccountsStore = BlockedAccountsStore()
+        blockedAccounts: BlockedAccountsStore = BlockedAccountsStore(),
+        initialTab: ProfileContentTab = .posts
     ) {
         self.api = api
         self.username = username
         self.currentUser = currentUser
         self.blockedAccounts = blockedAccounts
-        posts = Paginated { cursor in
+        selectedTab = initialTab
+        posts = PagedList { cursor in
             try await api.send(UserEndpoints.Posts(username: username, cursor: cursor))
         }
-        saved = Paginated { cursor in
+        saved = PagedList { cursor in
             try await api.send(UserEndpoints.Saved(cursor: cursor))
         }
-        tagged = Paginated { cursor in
+        tagged = PagedList { cursor in
             do {
                 return try await api.send(UserEndpoints.Tagged(username: username, cursor: cursor))
             } catch {
                 let apiError = error.asAPIError
-                if apiError == .notFound { return Page(items: []) }
+                if apiError == .notFound { return Paginated(items: []) }
                 if case .server(let status, _, _) = apiError, status == 501 {
-                    return Page(items: [])
+                    return Paginated(items: [])
                 }
                 throw error
             }
@@ -164,7 +167,7 @@ final class ProfileViewModel: ErrorPresenting {
         }
     }
 
-    func grid(for tab: ProfileContentTab) -> Paginated<Post> {
+    func grid(for tab: ProfileContentTab) -> PagedList<Post> {
         switch tab {
         case .posts: posts
         case .saved: saved

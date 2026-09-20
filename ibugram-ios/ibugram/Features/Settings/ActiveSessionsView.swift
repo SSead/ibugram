@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct ActiveSessionsView: View {
     @Environment(\.appContainer) private var container
@@ -16,10 +17,11 @@ struct ActiveSessionsView: View {
         .background(theme.colors.background)
         .navigationTitle("Active sessions")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            viewModel = viewModel ?? ActiveSessionsViewModel(api: container.api)
+        .task {
+            let model = viewModel ?? ActiveSessionsViewModel(api: container.api)
+            viewModel = model
+            await model.load()
         }
-        .task { await viewModel?.load() }
     }
 
     private func content(_ viewModel: ActiveSessionsViewModel) -> some View {
@@ -49,7 +51,7 @@ struct ActiveSessionsView: View {
         .errorAlert(bound.presentedError)
     }
 
-    private func sessionRow(_ session: DeviceSession, viewModel: ActiveSessionsViewModel) -> some View {
+    private func sessionRow(_ session: Session, viewModel: ActiveSessionsViewModel) -> some View {
         VStack(alignment: .leading, spacing: theme.spacing.xxs) {
             HStack {
                 Text(session.title)

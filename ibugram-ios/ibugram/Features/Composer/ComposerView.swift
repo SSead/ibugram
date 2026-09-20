@@ -1,5 +1,6 @@
 import PhotosUI
 import SwiftUI
+import IBUgramKit
 
 struct ComposerView: View {
     @Environment(\.appContainer) private var container
@@ -7,12 +8,16 @@ struct ComposerView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: ComposerViewModel?
     @State private var pickerItems: [PhotosPickerItem] = []
+    @State private var isPickingPhotos = false
 
     var body: some View {
         NavigationStack {
             Group {
                 if let viewModel {
                     editor(viewModel)
+                } else {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
             .background(theme.colors.background)
@@ -20,12 +25,13 @@ struct ComposerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
         }
-        .onAppear {
-            viewModel = viewModel ?? ComposerViewModel(
-                api: container.api,
-                imageIntelligence: container.imageIntelligence
-            )
-        }
+        .photosPicker(
+            isPresented: $isPickingPhotos,
+            selection: $pickerItems,
+            maxSelectionCount: photoPickerLimit,
+            matching: .images
+        )
+        .onAppear { ensureViewModel() }
     }
 
     @ToolbarContentBuilder
@@ -95,11 +101,9 @@ struct ComposerView: View {
             }
 
             if viewModel.canAddMoreImages {
-                PhotosPicker(
-                    selection: $pickerItems,
-                    maxSelectionCount: viewModel.remainingImageSlots,
-                    matching: .images
-                ) {
+                Button {
+                    isPickingPhotos = true
+                } label: {
                     Label("Add photos", systemImage: "plus")
                         .frame(maxWidth: .infinity)
                 }
@@ -194,6 +198,24 @@ struct ComposerView: View {
         }
         pickerItems = []
         await viewModel.addImages(data)
+    }
+
+    private var photoPickerLimit: Int {
+        max(1, viewModel?.remainingImageSlots ?? ComposerLimits.maximumImageCount)
+    }
+
+    private func ensureViewModel() {
+        guard viewModel == nil else { return }
+        let model = ComposerViewModel(
+            api: container.api,
+            imageIntelligence: container.imageIntelligence
+        )
+        if LaunchConfiguration.current.openComposer {
+            model.caption = "Golden hour on the lawn with the robotics crew. #burchlife"
+            model.locationName = FeedFixtures.campusLawn.name
+            model.selectedSpace = ComposerFixtures.spaces.first
+        }
+        viewModel = model
     }
 
     private func publish() async {

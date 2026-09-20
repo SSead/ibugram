@@ -1,0 +1,120 @@
+import XCTest
+
+@MainActor
+final class ScreenshotCaptureUITests: XCTestCase {
+    private let outputDirectory = URL(fileURLWithPath: "/Users/sead/Dev/sdp/docs/screenshots")
+
+    override func setUpWithError() throws {
+        continueAfterFailure = true
+        try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
+    }
+
+    func testCaptureLightScreens() throws {
+        captureMainScreens(appearance: .light, suffix: "light")
+    }
+
+    func testCaptureDarkScreens() throws {
+        captureMainScreens(appearance: .dark, suffix: "dark")
+    }
+
+    func testCaptureComposerLight() throws {
+        captureComposer(appearance: .light, suffix: "light")
+    }
+
+    func testCaptureComposerDark() throws {
+        captureComposer(appearance: .dark, suffix: "dark")
+    }
+
+    private func captureMainScreens(appearance: XCUIDevice.Appearance, suffix: String) {
+        XCUIDevice.shared.appearance = appearance
+        let app = launchedApp()
+
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15))
+        let feedReady = app.buttons["Space, IBU Robotics"].waitForExistence(timeout: 12)
+            || app.buttons["IBU Robotics"].waitForExistence(timeout: 2)
+            || app.buttons["Comment"].waitForExistence(timeout: 2)
+            || app.buttons["Event, Robotics open lab"].waitForExistence(timeout: 2)
+        XCTAssertTrue(feedReady, app.debugDescription)
+        save(app, name: "1x-feed-\(suffix)")
+
+        let comment = app.buttons["Comment"].firstMatch
+        XCTAssertTrue(comment.waitForExistence(timeout: 5))
+        comment.tap()
+        XCTAssertTrue(app.navigationBars["Post"].waitForExistence(timeout: 12))
+        for _ in 0..<3 { app.swipeUp() }
+        let commentsVisible = app.staticTexts["Beautiful light on the lawn today."].waitForExistence(timeout: 6)
+            || app.staticTexts["Comments"].waitForExistence(timeout: 2)
+            || app.staticTexts["Come sit with us next time!"].waitForExistence(timeout: 2)
+        XCTAssertTrue(commentsVisible, "Expected comments on post detail")
+        save(app, name: "1x-post-detail-\(suffix)")
+        popIfPossible(app)
+
+        tapTab(app, "Search")
+        XCTAssertTrue(app.staticTexts["Trending hashtags"].waitForExistence(timeout: 12))
+        save(app, name: "1x-search-idle-\(suffix)")
+
+        tapTab(app, "Activity")
+        XCTAssertTrue(
+            app.staticTexts["Leila Marković and 4 others liked your post"].waitForExistence(timeout: 12)
+                || app.staticTexts.matching(NSPredicate(format: "label CONTAINS 'liked your post'")).firstMatch.waitForExistence(timeout: 4)
+        )
+        save(app, name: "1x-activity-\(suffix)")
+
+        tapTab(app, "Profile")
+        XCTAssertTrue(app.staticTexts["Amina Hodžić"].waitForExistence(timeout: 12))
+        save(app, name: "1x-profile-\(suffix)")
+
+        app.terminate()
+    }
+
+    private func captureComposer(appearance: XCUIDevice.Appearance, suffix: String) {
+        XCUIDevice.shared.appearance = appearance
+        let app = launchedApp(openComposer: true)
+        XCTAssertTrue(app.navigationBars["New post"].waitForExistence(timeout: 15), app.debugDescription)
+        XCTAssertTrue(
+            app.staticTexts["Caption"].waitForExistence(timeout: 6)
+                || app.textViews["Caption"].waitForExistence(timeout: 2)
+                || app.buttons["Add photos"].waitForExistence(timeout: 2)
+        )
+        save(app, name: "1x-composer-\(suffix)")
+        app.terminate()
+    }
+
+    private func launchedApp(openComposer: Bool = false) -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments += [
+            "-ibugram-mock-api", "YES",
+            "-ibugram-auth-state", "signed-in",
+        ]
+        if openComposer {
+            app.launchArguments += ["-ibugram-open-composer", "YES"]
+        }
+        app.launch()
+        return app
+    }
+
+    private func tapTab(_ app: XCUIApplication, _ title: String) {
+        let tab = app.tabBars.buttons[title]
+        if tab.waitForExistence(timeout: 4) {
+            tab.tap()
+            return
+        }
+        app.buttons[title].firstMatch.tap()
+    }
+
+    private func popIfPossible(_ app: XCUIApplication) {
+        let back = app.navigationBars.buttons.firstMatch
+        if back.waitForExistence(timeout: 2) {
+            back.tap()
+        }
+    }
+
+    private func save(_ app: XCUIApplication, name: String) {
+        let url = outputDirectory.appendingPathComponent("\(name).png")
+        try? app.screenshot().pngRepresentation.write(to: url)
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+}

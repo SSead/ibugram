@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum ActivityFixtures {
     static let now = Date(timeIntervalSince1970: 1_779_638_400)
@@ -113,7 +114,7 @@ enum ActivityFixtures {
         createdAt: now.addingTimeInterval(-40 * 60)
     )
 
-    static let all: [ActivityNotification] = [
+    static let all: [IBUgramKit.Notification] = [
         replyToday,
         likeToday,
         commentToday,
@@ -126,22 +127,22 @@ enum ActivityFixtures {
     static var stubs: [String: any Sendable] {
         [
             "GET /users/me": ProfileFixtures.currentUser,
-            "GET /notifications": Page(items: all),
-            "GET /notifications/unread-count": UnreadCountResponse(count: 3)
+            "GET /notifications": Paginated(items: all),
+            "GET /notifications/unread-count": UnreadCount(count: 3)
         ]
     }
 
     static var emptyStubs: [String: any Sendable] {
         [
             "GET /users/me": ProfileFixtures.currentUser,
-            "GET /notifications": Page<ActivityNotification>(items: []),
-            "GET /notifications/unread-count": UnreadCountResponse(count: 0)
+            "GET /notifications": Paginated<IBUgramKit.Notification>(items: []),
+            "GET /notifications/unread-count": UnreadCount(count: 0)
         ]
     }
 
     static func item(
         id: String,
-        kind: ActivityKind,
+        kind: NotificationKind,
         actors: [User],
         groupCount: Int,
         post: Post? = nil,
@@ -150,8 +151,8 @@ enum ActivityFixtures {
         event: Event? = nil,
         isRead: Bool,
         createdAt: Date
-    ) -> ActivityNotification {
-        ActivityNotification(
+    ) -> IBUgramKit.Notification {
+        IBUgramKit.Notification(
             id: UUID(uuidString: id) ?? UUID(),
             kind: kind,
             actors: actors,

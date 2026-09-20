@@ -1,21 +1,5 @@
 import Foundation
 
-struct PlaceInput: Codable, Sendable, Hashable {
-    var id: UUID?
-    var name: String
-    var latitude: Double
-    var longitude: Double
-    var isCampusLocation: Bool
-}
-
-struct CreatePostBody: Codable, Sendable, Hashable {
-    var mediaIds: [UUID]
-    var caption: String?
-    var spaceId: UUID?
-    var place: PlaceInput?
-    var commentsEnabled: Bool
-}
-
 enum ComposerImagePhase: Equatable, Sendable {
     case pending
     case uploading

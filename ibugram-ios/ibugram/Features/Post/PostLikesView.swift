@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct PostLikesView: View {
     let postID: UUID
@@ -17,8 +18,11 @@ struct PostLikesView: View {
         .background(theme.colors.background)
         .navigationTitle("Likes")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { viewModel = viewModel ?? PostLikesViewModel(api: container.api, postID: postID) }
-        .task { await viewModel?.load() }
+        .task {
+            let model = viewModel ?? PostLikesViewModel(api: container.api, postID: postID)
+            viewModel = model
+            await model.load()
+        }
     }
 
     private func content(_ viewModel: PostLikesViewModel) -> some View {
@@ -62,7 +66,7 @@ struct PostLikesView: View {
         } label: {
             HStack(spacing: theme.spacing.sm) {
                 AvatarView(
-                    url: user.avatarUrl,
+                    url: user.avatarURL,
                     displayName: user.displayName,
                     size: .medium,
                     showsVerifiedBadge: user.role == .faculty || user.isVerified
@@ -97,7 +101,7 @@ struct PostLikesView: View {
         PostLikesView(postID: FeedFixtures.singleImage.id)
     }
     .appContainer(.preview(api: MockAPIClient(stubs: [
-        "GET /posts/\(FeedFixtures.singleImage.id)/likes": Page<User>(items: [])
+        "GET /posts/\(FeedFixtures.singleImage.id)/likes": Paginated<User>(items: [])
     ])))
 }
 

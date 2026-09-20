@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum ComposerFixtures {
     static let campusPlaces: [Place] = [FeedFixtures.campusLawn, FeedFixtures.cafeteria]

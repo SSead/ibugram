@@ -1,6 +1,7 @@
 import Foundation
 import Testing
 @testable import ibugram
+import IBUgramKit
 
 @Suite("Search debounce and scopes")
 @MainActor
@@ -60,8 +61,8 @@ struct SearchViewModelTests {
     func cancelRestoresIdle() async {
         let client = ScriptedAPIClient(stubs: [
             "GET /search": SearchFixtures.mixedResults,
-            "GET /search/trending": Page(items: SearchFixtures.trending),
-            "GET /users/suggested": Page(items: [ProfileFixtures.followedStudent])
+            "GET /search/trending": Paginated(items: SearchFixtures.trending),
+            "GET /users/suggested": Paginated(items: [ProfileFixtures.followedStudent])
         ])
         let viewModel = SearchViewModel(
             api: client,

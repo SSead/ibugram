@@ -2,6 +2,7 @@ import Foundation
 import Testing
 
 @testable import ibugram
+import IBUgramKit
 
 @Suite("Post comments")
 @MainActor
@@ -39,13 +40,13 @@ struct PostViewModelTests {
 }
 
 actor PostScriptedAPIClient: APIRequesting {
-    private let likeError: APIError?
+    private let likeError: ibugram.APIError?
 
-    init(likeError: APIError? = nil) {
+    init(likeError: ibugram.APIError? = nil) {
         self.likeError = likeError
     }
 
-    func send<E: Endpoint>(_ endpoint: E) async throws -> E.Response {
+    func send<E: ibugram.Endpoint>(_ endpoint: E) async throws -> E.Response {
         if endpoint is PostEndpoint.Like || endpoint is PostEndpoint.Unlike {
             if let likeError { throw likeError }
             return try typed(EmptyResponse())
@@ -57,7 +58,7 @@ actor PostScriptedAPIClient: APIRequesting {
             return try typed(FeedFixtures.singleImage)
         }
         if endpoint is PostEndpoint.Comments {
-            return try typed(Page(items: PostFixtures.comments, nextCursor: nil))
+            return try typed(Paginated(items: PostFixtures.comments, nextCursor: nil))
         }
         if let create = endpoint as? PostEndpoint.CreateComment {
             let comment = Comment(
@@ -73,12 +74,12 @@ actor PostScriptedAPIClient: APIRequesting {
             )
             return try typed(comment)
         }
-        throw APIError.notFound
+        throw ibugram.APIError.notFound
     }
 
     private func typed<Value, Response>(_ value: Value) throws -> Response {
         guard let typed = value as? Response else {
-            throw APIError.decoding("stub type mismatch")
+            throw ibugram.APIError.decoding("stub type mismatch")
         }
         return typed
     }

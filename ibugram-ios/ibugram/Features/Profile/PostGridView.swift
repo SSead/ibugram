@@ -1,7 +1,8 @@
 import SwiftUI
+import IBUgramKit
 
 struct PostGridView: View {
-    let posts: Paginated<Post>
+    let posts: PagedList<Post>
     var emptyTitle: String
     var emptyMessage: String
     var onSelect: (Post) -> Void
@@ -56,7 +57,7 @@ struct PostGridView: View {
 }
 
 #Preview("Post grid") {
-    let posts = Paginated<Post> { _ in Page(items: ProfileFixtures.posts) }
+    let posts = PagedList<Post> { _ in Paginated(items: ProfileFixtures.posts) }
     return ScrollView {
         PostGridView(
             posts: posts,

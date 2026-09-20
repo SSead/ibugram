@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct SearchPlaceholderView: View {
     var body: some View {

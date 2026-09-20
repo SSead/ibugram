@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 /// Preview and test double for `APIClient`. Stubs are keyed `"<METHOD> <path>"`, e.g.
 /// `"GET /users/me"`. Anything unstubbed throws `.notFound`, which keeps previews honest.

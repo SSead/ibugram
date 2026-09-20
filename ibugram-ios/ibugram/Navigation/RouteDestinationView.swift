@@ -1,26 +1,26 @@
 import SwiftUI
 
-/// Every pushed screen in the app resolves here. Feature teams replace their own cases with
-/// the real view and touch nothing else.
 struct RouteDestinationView: View {
     let route: Route
+
+    @Environment(AuthSessionStore.self) private var session
 
     var body: some View {
         switch route {
         case .profile(let username):
-            unbuilt("Profile of @\(username)", owner: "Profiles & Social Graph")
+            ProfileView(username: username)
         case .followers(let username):
-            unbuilt("Followers of @\(username)", owner: "Profiles & Social Graph")
+            FollowListView(username: username, kind: .followers)
         case .following(let username):
-            unbuilt("@\(username) is following", owner: "Profiles & Social Graph")
+            FollowListView(username: username, kind: .following)
         case .post(let id):
-            unbuilt("Post \(id.uuidString.prefix(8))", owner: "Feed & Posts")
+            PostDetailView(postID: id)
         case .postComments(let postID):
-            unbuilt("Comments on \(postID.uuidString.prefix(8))", owner: "Feed & Posts")
+            PostDetailView(postID: postID)
         case .postLikes(let postID):
-            unbuilt("Likes on \(postID.uuidString.prefix(8))", owner: "Feed & Posts")
+            PostLikesView(postID: postID)
         case .hashtag(let tag):
-            unbuilt("#\(tag)", owner: "Search & Discovery")
+            HashtagDetailView(tag: tag)
         case .space(let slug):
             unbuilt("Space /\(slug)", owner: "Spaces")
         case .spaceMembers(let slug):
@@ -36,11 +36,21 @@ struct RouteDestinationView: View {
         case .messageRequests:
             unbuilt("Message requests", owner: "Messaging")
         case .savedPosts:
-            unbuilt("Saved posts", owner: "Profiles & Social Graph")
+            if let username = session.currentUser?.username {
+                ProfileView(username: username, initialTab: .saved)
+            } else {
+                unbuilt("Saved posts", owner: "Profiles & Social Graph")
+            }
         case .settings:
-            SettingsPlaceholderView()
+            SettingsView()
+        case .editProfile:
+            EditProfileRouteView()
+        case .changeUsername:
+            ChangeUsernameRouteView()
+        case .blockedAccounts:
+            BlockedAccountsView()
         case .activeSessions:
-            unbuilt("Active sessions", owner: "Identity & Access")
+            ActiveSessionsView()
         }
     }
 
@@ -49,10 +59,44 @@ struct RouteDestinationView: View {
     }
 }
 
+private struct EditProfileRouteView: View {
+    @Environment(AuthSessionStore.self) private var session
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        if let user = session.currentUser {
+            EditProfileView(user: user) { updated in
+                session.update(user: updated)
+                dismiss()
+            }
+        } else {
+            UnbuiltDestinationView(title: "Edit profile", owner: "Profiles & Social Graph")
+        }
+    }
+}
+
+private struct ChangeUsernameRouteView: View {
+    @Environment(AuthSessionStore.self) private var session
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        if let user = session.currentUser {
+            ChangeUsernameView(currentUsername: user.username) { updated in
+                session.update(user: updated)
+                dismiss()
+            }
+        } else {
+            UnbuiltDestinationView(title: "Username", owner: "Identity & Access")
+        }
+    }
+}
+
 #Preview("Route destination") {
     NavigationStack {
         RouteDestinationView(route: .profile(username: "amina.h"))
     }
+    .appContainer(.preview(api: MockAPIClient(stubs: ProfileFixtures.ownProfileStubs)))
+    .environment(AuthSessionStore(container: .preview()))
 }
 
 #Preview("Route destination · dark") {
@@ -60,4 +104,5 @@ struct RouteDestinationView: View {
         RouteDestinationView(route: .space(slug: "ibu-robotics"))
     }
     .preferredColorScheme(.dark)
+    .environment(AuthSessionStore(container: .preview()))
 }

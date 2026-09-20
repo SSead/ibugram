@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum SampleData {
     static let amina = User(
@@ -12,7 +13,7 @@ enum SampleData {
         yearOfStudy: 4,
         isVerified: false,
         counts: UserCounts(posts: 42, followers: 618, following: 214),
-        viewer: ViewerRelationship(isFollowing: true, isFollowedBy: true, isBlocked: false),
+        viewer: UserViewerState(isFollowing: true, isFollowedBy: true, isBlocked: false),
         createdAt: Date(timeIntervalSince1970: 1_695_000_000)
     )
 
@@ -27,7 +28,7 @@ enum SampleData {
         yearOfStudy: nil,
         isVerified: true,
         counts: UserCounts(posts: 96, followers: 2_431, following: 87),
-        viewer: ViewerRelationship(isFollowing: false, isFollowedBy: false, isBlocked: false),
+        viewer: UserViewerState(isFollowing: false, isFollowedBy: false, isBlocked: false),
         createdAt: Date(timeIntervalSince1970: 1_650_000_000)
     )
 
@@ -54,7 +55,7 @@ enum SampleData {
         accessTokenExpiresAt: Date(timeIntervalSinceNow: 900)
     )
 
-    static let codeChallenge = OneTimeCodeChallenge(
+    static let codeChallenge = RequestCodeResponse(
         expiresAt: Date(timeIntervalSinceNow: 600),
         resendAfter: 60,
         debugCode: "482913"
@@ -72,10 +73,19 @@ enum SampleData {
         "GET /users/me": amina,
         "GET /users/amina.h": amina,
         "GET /users/d.kovac": professorKovac,
-        "GET /users/amina.h/followers": Page(items: users, nextCursor: nil),
+        "GET /users/amina.h/followers": Paginated(items: users, nextCursor: nil),
         "POST /auth/request-code": codeChallenge,
         "POST /auth/verify-code": session,
         "POST /users/me/username": amina,
         "PATCH /users/me": amina
     ]
+
+    static var previewStubs: [String: any Sendable] {
+        var stubs = FeedFixtures.stubs
+        stubs.merge(ProfileFixtures.ownProfileStubs) { current, _ in current }
+        stubs.merge(SearchFixtures.idleStubs) { current, _ in current }
+        stubs.merge(ActivityFixtures.stubs) { current, _ in current }
+        stubs.merge(SettingsFixtures.stubs) { current, _ in current }
+        return stubs
+    }
 }

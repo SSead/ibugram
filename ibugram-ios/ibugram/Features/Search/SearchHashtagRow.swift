@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct SearchHashtagRow: View {
     let hashtag: Hashtag

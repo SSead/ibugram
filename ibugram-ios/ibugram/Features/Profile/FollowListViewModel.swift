@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 @MainActor
 @Observable
@@ -15,7 +16,7 @@ final class FollowListViewModel: ErrorPresenting {
         }
     }
 
-    let people: Paginated<User>
+    let people: PagedList<User>
     var presentedError: PresentedError?
     private(set) var followOverrides: [UUID: Bool] = [:]
 
@@ -29,11 +30,11 @@ final class FollowListViewModel: ErrorPresenting {
         self.currentUserID = currentUserID
         switch kind {
         case .followers:
-            people = Paginated { cursor in
+            people = PagedList { cursor in
                 try await api.send(UserEndpoint.followers(of: username, cursor: cursor))
             }
         case .following:
-            people = Paginated { cursor in
+            people = PagedList { cursor in
                 try await api.send(UserEndpoints.Following(username: username, cursor: cursor))
             }
         }

@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import IBUgramKit
 
 struct PostAuthorRow: View {
     let post: Post
@@ -12,7 +13,7 @@ struct PostAuthorRow: View {
         HStack(alignment: .center, spacing: theme.spacing.xs) {
             Button(action: onAuthor) {
                 AvatarView(
-                    url: post.author.avatarUrl,
+                    url: post.author.avatarURL,
                     displayName: post.author.displayName,
                     size: .small,
                     showsVerifiedBadge: isFaculty

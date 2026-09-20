@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct ProfilePlaceholderView: View {
     @Environment(AuthSessionStore.self) private var session

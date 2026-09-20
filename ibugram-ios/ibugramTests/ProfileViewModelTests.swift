@@ -1,6 +1,7 @@
 import Foundation
 import Testing
 @testable import ibugram
+import IBUgramKit
 
 @Suite("Profile follow state")
 @MainActor
@@ -9,7 +10,7 @@ struct ProfileViewModelTests {
     func followSucceedsOptimistically() async {
         let client = ScriptedAPIClient(stubs: [
             "GET /users/d.kovac": ProfileFixtures.unfollowedFaculty,
-            "GET /users/d.kovac/posts": Page<Post>(items: [])
+            "GET /users/d.kovac/posts": Paginated<Post>(items: [])
         ])
         let viewModel = ProfileViewModel(
             api: client,
@@ -33,7 +34,7 @@ struct ProfileViewModelTests {
         let client = ScriptedAPIClient(
             stubs: [
                 "GET /users/d.kovac": faculty,
-                "GET /users/d.kovac/posts": Page<Post>(items: [])
+                "GET /users/d.kovac/posts": Paginated<Post>(items: [])
             ],
             failures: [
                 "POST /users/\(faculty.id.uuidString)/follow": .offline
@@ -59,7 +60,7 @@ struct ProfileViewModelTests {
         let client = ScriptedAPIClient(
             stubs: [
                 "GET /users/leila.m": student,
-                "GET /users/leila.m/posts": Page<Post>(items: [])
+                "GET /users/leila.m/posts": Paginated<Post>(items: [])
             ],
             failures: [
                 "DELETE /users/\(student.id.uuidString)/follow": .rateLimited(retryAfter: 5)
@@ -89,7 +90,7 @@ struct FollowListViewModelTests {
         let student = ProfileFixtures.followedStudent.withFollowState(isFollowing: false)
         let client = ScriptedAPIClient(
             stubs: [
-                "GET /users/amina.h/followers": Page(items: [student])
+                "GET /users/amina.h/followers": Paginated(items: [student])
             ],
             failures: [
                 "POST /users/\(student.id.uuidString)/follow": .offline

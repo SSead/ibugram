@@ -1,20 +1,21 @@
 import Foundation
+import IBUgramKit
 
 @MainActor
 @Observable
 final class PostLikesViewModel: ErrorPresenting {
     var presentedError: PresentedError?
 
-    private let likes: Paginated<User>
+    private let likes: PagedList<User>
 
     init(api: any APIRequesting, postID: UUID) {
-        self.likes = Paginated { cursor in
+        self.likes = PagedList { cursor in
             try await api.send(PostEndpoint.likes(postID: postID, cursor: cursor))
         }
     }
 
     var users: [User] { likes.items }
-    var phase: Paginated<User>.Phase { likes.phase }
+    var phase: PagedList<User>.Phase { likes.phase }
     var isEmpty: Bool { likes.isEmpty }
     var isInitialLoading: Bool { likes.phase == .loading && likes.items.isEmpty }
     var isLoadingMore: Bool { likes.isLoadingMore }

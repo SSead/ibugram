@@ -1,8 +1,9 @@
 import Foundation
+import IBUgramKit
 
 enum UserEndpoints {
     struct Posts: Endpoint {
-        typealias Response = Page<Post>
+        typealias Response = Paginated<Post>
 
         let username: String
         var cursor: String?
@@ -13,7 +14,7 @@ enum UserEndpoints {
     }
 
     struct Following: Endpoint {
-        typealias Response = Page<User>
+        typealias Response = Paginated<User>
 
         let username: String
         var cursor: String?
@@ -24,7 +25,7 @@ enum UserEndpoints {
     }
 
     struct Tagged: Endpoint {
-        typealias Response = Page<Post>
+        typealias Response = Paginated<Post>
 
         let username: String
         var cursor: String?
@@ -35,7 +36,7 @@ enum UserEndpoints {
     }
 
     struct Suggested: Endpoint {
-        typealias Response = Page<User>
+        typealias Response = Paginated<User>
 
         var cursor: String?
         var limit: Int = 20
@@ -45,7 +46,7 @@ enum UserEndpoints {
     }
 
     struct Saved: Endpoint {
-        typealias Response = Page<Post>
+        typealias Response = Paginated<Post>
 
         var cursor: String?
         var limit: Int = 20
@@ -91,7 +92,7 @@ enum UserEndpoints {
     }
 
     struct Blocked: Endpoint {
-        typealias Response = Page<User>
+        typealias Response = Paginated<User>
 
         var cursor: String?
         var limit: Int = 20

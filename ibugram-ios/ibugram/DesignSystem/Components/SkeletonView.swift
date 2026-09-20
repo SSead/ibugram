@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct SkeletonView: View {
     var cornerRadius: CGFloat?

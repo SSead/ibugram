@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct CommentRow: View {
     let comment: Comment
@@ -14,7 +15,7 @@ struct CommentRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: theme.spacing.xs) {
             Button(action: onAuthor) {
-                AvatarView(url: comment.author.avatarUrl, displayName: comment.author.displayName, size: .small)
+                AvatarView(url: comment.author.avatarURL, displayName: comment.author.displayName, size: .small)
             }
             .accessibilityLabel("Open \(comment.author.displayName)'s profile")
 

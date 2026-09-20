@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct ProfileFollowButton: View {
     let user: User

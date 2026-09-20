@@ -1,9 +1,22 @@
 import Foundation
+import IBUgramKit
 
 enum SearchFixtures {
-    static let robotics = Hashtag(tag: "robotics", postCount: 128)
-    static let burchLife = Hashtag(tag: "burchlife", postCount: 86)
-    static let finals = Hashtag(tag: "finals", postCount: 41)
+    static let robotics = Hashtag(
+        id: UUID(uuidString: "99999999-9999-4999-8999-999999999991") ?? UUID(),
+        tag: "robotics",
+        postCount: 128
+    )
+    static let burchLife = Hashtag(
+        id: UUID(uuidString: "99999999-9999-4999-8999-999999999992") ?? UUID(),
+        tag: "burchlife",
+        postCount: 86
+    )
+    static let finals = Hashtag(
+        id: UUID(uuidString: "99999999-9999-4999-8999-999999999993") ?? UUID(),
+        tag: "finals",
+        postCount: 41
+    )
 
     static let trending = [burchLife, robotics, finals]
 
@@ -38,11 +51,11 @@ enum SearchFixtures {
     static var idleStubs: [String: any Sendable] {
         [
             "GET /users/me": ProfileFixtures.currentUser,
-            "GET /search/trending": Page(items: trending),
-            "GET /users/suggested": Page(items: [ProfileFixtures.followedStudent, ProfileFixtures.unfollowedFaculty]),
+            "GET /search/trending": Paginated(items: trending),
+            "GET /users/suggested": Paginated(items: [ProfileFixtures.followedStudent, ProfileFixtures.unfollowedFaculty]),
             "GET /search": mixedResults,
-            "GET /hashtags/robotics/posts": Page(items: Array(ProfileFixtures.posts.prefix(4))),
-            "GET /hashtags/burchlife/posts": Page(items: Array(ProfileFixtures.posts.prefix(3)))
+            "GET /hashtags/robotics/posts": Paginated(items: Array(ProfileFixtures.posts.prefix(4))),
+            "GET /hashtags/burchlife/posts": Paginated(items: Array(ProfileFixtures.posts.prefix(3)))
         ]
     }
 

@@ -2,6 +2,7 @@ import Foundation
 import Testing
 
 @testable import ibugram
+import IBUgramKit
 
 @Suite("Feed pagination")
 @MainActor
@@ -10,8 +11,8 @@ struct FeedViewModelPaginationTests {
     func paginationAdvancesThenTerminates() async {
         let api = FeedScriptedAPIClient(
             pages: [
-                nil: Page(items: [FeedFixtures.singleImage], nextCursor: "page-2"),
-                "page-2": Page(items: [FeedFixtures.carousel], nextCursor: nil)
+                nil: Paginated(items: [FeedFixtures.singleImage], nextCursor: "page-2"),
+                "page-2": Paginated(items: [FeedFixtures.carousel], nextCursor: nil)
             ]
         )
         let viewModel = FeedViewModel(api: api, happeningNow: { [] })
@@ -32,7 +33,7 @@ struct FeedViewModelPaginationTests {
     func firstPageWithoutCursorTerminates() async {
         let api = FeedScriptedAPIClient(
             pages: [
-                nil: Page(items: [FeedFixtures.liked], nextCursor: nil)
+                nil: Paginated(items: [FeedFixtures.liked], nextCursor: nil)
             ]
         )
         let viewModel = FeedViewModel(api: api, happeningNow: { [] })
@@ -53,7 +54,7 @@ struct FeedViewModelLikeTests {
     @Test("an optimistic like is rolled back when the request fails")
     func optimisticLikeRollsBackOnFailure() async {
         let api = FeedScriptedAPIClient(
-            pages: [nil: Page(items: [FeedFixtures.singleImage], nextCursor: nil)],
+            pages: [nil: Paginated(items: [FeedFixtures.singleImage], nextCursor: nil)],
             mutationError: .offline
         )
         let viewModel = FeedViewModel(api: api, happeningNow: { [] })
@@ -72,7 +73,7 @@ struct FeedViewModelLikeTests {
     @Test("a successful like stays flipped and increments the count")
     func successfulLikeStaysFlipped() async {
         let api = FeedScriptedAPIClient(
-            pages: [nil: Page(items: [FeedFixtures.singleImage], nextCursor: nil)]
+            pages: [nil: Paginated(items: [FeedFixtures.singleImage], nextCursor: nil)]
         )
         let viewModel = FeedViewModel(api: api, happeningNow: { [] })
         await viewModel.load()
@@ -87,16 +88,16 @@ struct FeedViewModelLikeTests {
 }
 
 actor FeedScriptedAPIClient: APIRequesting {
-    private let pages: [String?: Page<Post>]
-    private let mutationError: APIError?
+    private let pages: [String?: Paginated<Post>]
+    private let mutationError: ibugram.APIError?
     private(set) var followingLoads = 0
 
-    init(pages: [String?: Page<Post>], mutationError: APIError? = nil) {
+    init(pages: [String?: Paginated<Post>], mutationError: ibugram.APIError? = nil) {
         self.pages = pages
         self.mutationError = mutationError
     }
 
-    func send<E: Endpoint>(_ endpoint: E) async throws -> E.Response {
+    func send<E: ibugram.Endpoint>(_ endpoint: E) async throws -> E.Response {
         if endpoint is PostEndpoint.Like || endpoint is PostEndpoint.Unlike
             || endpoint is PostEndpoint.Save || endpoint is PostEndpoint.Unsave
         {
@@ -105,19 +106,19 @@ actor FeedScriptedAPIClient: APIRequesting {
         }
         if let following = endpoint as? FeedEndpoint.Following {
             followingLoads += 1
-            guard let page = pages[following.cursor] else { throw APIError.notFound }
+            guard let page = pages[following.cursor] else { throw ibugram.APIError.notFound }
             return try typed(page)
         }
         if let discover = endpoint as? FeedEndpoint.Discover {
-            guard let page = pages[discover.cursor] else { throw APIError.notFound }
+            guard let page = pages[discover.cursor] else { throw ibugram.APIError.notFound }
             return try typed(page)
         }
-        throw APIError.notFound
+        throw ibugram.APIError.notFound
     }
 
     private func typed<Value, Response>(_ value: Value) throws -> Response {
         guard let typed = value as? Response else {
-            throw APIError.decoding("stub type mismatch")
+            throw ibugram.APIError.decoding("stub type mismatch")
         }
         return typed
     }

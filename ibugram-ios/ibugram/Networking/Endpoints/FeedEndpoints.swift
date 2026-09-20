@@ -1,8 +1,9 @@
 import Foundation
+import IBUgramKit
 
 enum FeedEndpoint {
     struct Following: Endpoint {
-        typealias Response = Page<Post>
+        typealias Response = Paginated<Post>
 
         var cursor: String?
         var limit: Int = 20
@@ -16,7 +17,7 @@ enum FeedEndpoint {
     }
 
     struct Discover: Endpoint {
-        typealias Response = Page<Post>
+        typealias Response = Paginated<Post>
 
         var cursor: String?
         var limit: Int = 20

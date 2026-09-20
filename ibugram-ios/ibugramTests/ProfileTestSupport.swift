@@ -1,22 +1,23 @@
 import Foundation
 import Testing
 @testable import ibugram
+import IBUgramKit
 
 actor ScriptedAPIClient: APIRequesting {
     private var stubs: [String: any Sendable]
-    private var failures: [String: APIError]
+    private var failures: [String: ibugram.APIError]
     private(set) var recorded: [String] = []
     private(set) var lastQueryItems: [URLQueryItem] = []
 
     init(
         stubs: [String: any Sendable] = [:],
-        failures: [String: APIError] = [:]
+        failures: [String: ibugram.APIError] = [:]
     ) {
         self.stubs = stubs
         self.failures = failures
     }
 
-    func send<E: Endpoint>(_ endpoint: E) async throws -> E.Response {
+    func send<E: ibugram.Endpoint>(_ endpoint: E) async throws -> E.Response {
         let key = "\(endpoint.method.rawValue) \(endpoint.path)"
         recorded.append(key)
         lastQueryItems = endpoint.queryItems
@@ -25,14 +26,14 @@ actor ScriptedAPIClient: APIRequesting {
         }
         if let stub = stubs[key] {
             guard let typed = stub as? E.Response else {
-                throw APIError.decoding("stub for \(key) is \(type(of: stub)), not \(E.Response.self)")
+                throw ibugram.APIError.decoding("stub for \(key) is \(type(of: stub)), not \(E.Response.self)")
             }
             return typed
         }
         if let empty = EmptyResponse() as? E.Response {
             return empty
         }
-        throw APIError.notFound
+        throw ibugram.APIError.notFound
     }
 
     func recordedCalls() -> [String] { recorded }
@@ -41,7 +42,7 @@ actor ScriptedAPIClient: APIRequesting {
         lastQueryItems.first { $0.name == name }?.value
     }
 
-    func fail(_ key: String, with error: APIError) {
+    func fail(_ key: String, with error: ibugram.APIError) {
         failures[key] = error
     }
 

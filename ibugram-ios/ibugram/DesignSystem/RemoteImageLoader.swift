@@ -1,4 +1,5 @@
 import UIKit
+import IBUgramKit
 
 actor RemoteImageLoader {
     private let session: URLSession

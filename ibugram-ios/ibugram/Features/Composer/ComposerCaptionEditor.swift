@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct ComposerCaptionEditor: View {
     @Binding var caption: String
@@ -48,16 +49,17 @@ struct ComposerCaptionEditor: View {
     }
 
     private var highlightedCaption: some View {
-        Text(caption.isEmpty ? "What is happening on campus?" : "")
-            .font(theme.typography.body)
-            .foregroundStyle(theme.colors.textTertiary)
-            .overlay(alignment: .topLeading) {
-                if !caption.isEmpty {
-                    tokens
-                }
+        Group {
+            if caption.isEmpty {
+                Text("What is happening on campus?")
+                    .font(theme.typography.body)
+                    .foregroundStyle(theme.colors.textTertiary)
+            } else {
+                tokens
             }
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-            .allowsHitTesting(false)
+        }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .allowsHitTesting(false)
     }
 
     private var tokens: Text {

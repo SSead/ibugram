@@ -2,6 +2,7 @@ import Foundation
 import Testing
 
 @testable import ibugram
+import IBUgramKit
 
 @Suite("Composer upload")
 @MainActor
@@ -59,13 +60,13 @@ actor ComposerScriptedAPIClient: APIRequesting {
         failingUploadIndex = nil
     }
 
-    func send<E: Endpoint>(_ endpoint: E) async throws -> E.Response {
+    func send<E: ibugram.Endpoint>(_ endpoint: E) async throws -> E.Response {
         let key = "\(endpoint.method.rawValue) \(endpoint.path)"
         if let upload = endpoint as? MediaEndpoint.Upload {
             if failingUploadIndex == mediaUploads {
                 calls.append(key)
                 mediaUploads += 1
-                throw APIError.offline
+                throw ibugram.APIError.offline
             }
             calls.append(key)
             uploadedFilenames.append(upload.filename)
@@ -85,12 +86,12 @@ actor ComposerScriptedAPIClient: APIRequesting {
             calls.append(key)
             return try typed(FeedFixtures.singleImage)
         }
-        throw APIError.notFound
+        throw ibugram.APIError.notFound
     }
 
     private func typed<Value, Response>(_ value: Value) throws -> Response {
         guard let typed = value as? Response else {
-            throw APIError.decoding("stub type mismatch")
+            throw ibugram.APIError.decoding("stub type mismatch")
         }
         return typed
     }

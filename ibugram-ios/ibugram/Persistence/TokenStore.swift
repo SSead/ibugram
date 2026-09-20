@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 struct TokenPair: Codable, Sendable, Equatable {
     let accessToken: String

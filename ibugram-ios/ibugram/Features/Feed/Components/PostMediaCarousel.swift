@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct PostMediaCarousel: View {
     let media: [Media]
@@ -14,7 +15,7 @@ struct PostMediaCarousel: View {
             TabView(selection: $page) {
                 ForEach(Array(media.enumerated()), id: \.element.id) { index, item in
                     RemoteImage(
-                        url: item.url,
+                        url: item.resourceURL,
                         blurhash: item.blurhash,
                         altText: item.altText,
                         contentMode: .fill

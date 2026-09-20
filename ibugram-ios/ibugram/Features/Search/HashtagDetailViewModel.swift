@@ -1,15 +1,16 @@
 import Foundation
+import IBUgramKit
 
 @MainActor
 @Observable
 final class HashtagDetailViewModel: ErrorPresenting {
-    let posts: Paginated<Post>
+    let posts: PagedList<Post>
     var presentedError: PresentedError?
     let tag: String
 
     init(api: any APIRequesting, tag: String) {
         self.tag = tag
-        posts = Paginated { cursor in
+        posts = PagedList { cursor in
             try await api.send(SearchEndpoints.HashtagPosts(tag: tag, cursor: cursor))
         }
     }

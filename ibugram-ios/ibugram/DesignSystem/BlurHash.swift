@@ -1,6 +1,7 @@
 import CoreGraphics
 import Foundation
 import UIKit
+import IBUgramKit
 
 /// Decoder for the compact BlurHash placeholders the media pipeline attaches to every `Media`.
 /// Implements the reference algorithm (base-83 payload, inverse DCT over `numX * numY` components).

@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum APIError: Error, Sendable, Equatable {
     case offline
@@ -22,7 +23,7 @@ enum APIError: Error, Sendable, Equatable {
 
     init(envelope: APIErrorEnvelope, statusCode: Int, retryAfter: Int?) {
         let failure = envelope.error
-        switch APIErrorCode(rawValue: failure.code) {
+        switch failure.code {
         case .unauthorized: self = .unauthorized
         case .forbidden: self = .forbidden
         case .notFound: self = .notFound
@@ -35,8 +36,8 @@ enum APIError: Error, Sendable, Equatable {
         case .usernameTaken: self = .usernameTaken
         case .conflict: self = .conflict
         case .payloadTooLarge: self = .payloadTooLarge
-        case .internalError, .none:
-            self = .server(status: statusCode, code: failure.code, message: failure.message)
+        case .internalError, .unknown:
+            self = .server(status: statusCode, code: failure.code.rawValue, message: failure.message)
         }
     }
 }

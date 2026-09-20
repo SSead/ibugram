@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct SearchIdleView: View {
     let trending: [Hashtag]

@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct SearchView: View {
     @Environment(\.appContainer) private var container
@@ -18,10 +19,11 @@ struct SearchView: View {
         .background(theme.colors.background)
         .navigationTitle("Search")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            viewModel = viewModel ?? SearchViewModel(api: container.api)
+        .task {
+            let model = viewModel ?? SearchViewModel(api: container.api)
+            viewModel = model
+            await model.loadIdleContent()
         }
-        .task { await viewModel?.loadIdleContent() }
     }
 
     private func loaded(_ viewModel: SearchViewModel) -> some View {
@@ -73,7 +75,7 @@ struct SearchView: View {
             get: { viewModel.scope },
             set: { scope in Task { await viewModel.selectScope(scope) } }
         )) {
-            ForEach(SearchScope.allCases) { scope in
+            ForEach(SearchScope.allCases, id: \.self) { scope in
                 Text(scope.title).tag(scope)
             }
         }

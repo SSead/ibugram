@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct FeedPlaceholderView: View {
     var body: some View {

@@ -1,5 +1,6 @@
 import Foundation
 import NaturalLanguage
+import IBUgramKit
 
 struct CaptionInsight: Sendable, Equatable {
     let suggestedHashtags: [String]

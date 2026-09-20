@@ -1,7 +1,8 @@
 import Foundation
+import IBUgramKit
 
 enum SettingsFixtures {
-    static let currentSession = DeviceSession(
+    static let currentSession = Session(
         id: UUID(uuidString: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee1") ?? UUID(),
         deviceName: "Amina's iPhone",
         userAgent: "IBUgram/1.0 (iPhone; iOS 26.3.1)",
@@ -12,7 +13,7 @@ enum SettingsFixtures {
         expiresAt: Date(timeIntervalSince1970: 1_785_000_000)
     )
 
-    static let laptopSession = DeviceSession(
+    static let laptopSession = Session(
         id: UUID(uuidString: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee2") ?? UUID(),
         deviceName: "MacBook Air",
         userAgent: "Mozilla/5.0",
@@ -27,7 +28,7 @@ enum SettingsFixtures {
         [
             "GET /users/me": ProfileFixtures.currentUser,
             "GET /auth/sessions": [currentSession, laptopSession],
-            "GET /users/me/blocked": Page(items: [ProfileFixtures.unfollowedFaculty]),
+            "GET /users/me/blocked": Paginated(items: [ProfileFixtures.unfollowedFaculty]),
             "PATCH /users/me": ProfileFixtures.currentUser,
             "POST /users/me/username": ProfileFixtures.currentUser
         ]

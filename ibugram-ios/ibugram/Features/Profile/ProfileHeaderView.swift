@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct ProfileHeaderView: View {
     let user: User
@@ -30,7 +31,7 @@ struct ProfileHeaderView: View {
     private var identity: some View {
         HStack(alignment: .center, spacing: theme.spacing.md) {
             AvatarView(
-                url: user.avatarUrl,
+                url: user.avatarURL,
                 displayName: user.displayName,
                 size: .extraLarge,
                 showsVerifiedBadge: false

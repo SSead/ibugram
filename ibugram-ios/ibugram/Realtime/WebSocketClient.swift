@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 actor WebSocketClient {
     enum ConnectionStatus: Sendable, Equatable {
@@ -17,7 +18,7 @@ actor WebSocketClient {
     private var socket: URLSessionWebSocketTask?
     private var lifecycle: Task<Void, Never>?
     private var keepAlive: Task<Void, Never>?
-    private var subscribers: [UUID: AsyncStream<ServerFrame>.Continuation] = [:]
+    private var subscribers: [UUID: AsyncStream<ServerMessage>.Continuation] = [:]
     private var subscribedConversations: Set<UUID> = []
     private var isActive = false
     private var reconnectAttempt = 0
@@ -30,9 +31,8 @@ actor WebSocketClient {
         self.session = session
     }
 
-    /// Every consumer gets its own stream; frames are fanned out to all of them.
-    func events() -> AsyncStream<ServerFrame> {
-        let (stream, continuation) = AsyncStream<ServerFrame>.makeStream()
+    func events() -> AsyncStream<ServerMessage> {
+        let (stream, continuation) = AsyncStream<ServerMessage>.makeStream()
         let id = UUID()
         subscribers[id] = continuation
         continuation.onTermination = { [weak self] _ in
@@ -56,28 +56,26 @@ actor WebSocketClient {
         status = .disconnected
     }
 
-    func send(_ frame: ClientFrame) async throws {
+    func send(_ message: ClientMessage) async throws {
         guard let socket else { throw APIError.transport("web socket is not connected") }
-        let data = try encoder.encode(frame)
+        let data = try encoder.encode(message)
         try await socket.send(.data(data))
     }
 
     func subscribe(toConversation id: UUID) async {
         subscribedConversations.insert(id)
-        try? await send(.subscribe(conversationID: id))
+        try? await send(.subscribeConversation(ConversationScope(conversationId: id)))
     }
 
     func unsubscribe(fromConversation id: UUID) async {
         subscribedConversations.remove(id)
-        try? await send(.unsubscribe(conversationID: id))
+        try? await send(.unsubscribeConversation(ConversationScope(conversationId: id)))
     }
 
     private func removeSubscriber(_ id: UUID) {
         subscribers[id] = nil
     }
 }
-
-// MARK: - Connection lifecycle
 
 private extension WebSocketClient {
     func runConnectionLifecycle() async {
@@ -93,7 +91,6 @@ private extension WebSocketClient {
         status = .disconnected
     }
 
-    /// Returns whether the socket successfully opened, so a long-lived connection resets backoff.
     func openAndPumpFrames() async -> Bool {
         status = .connecting
         guard let tokens = await tokenStore.currentTokens(),
@@ -138,65 +135,31 @@ private extension WebSocketClient {
 
     func resubscribeAll() async {
         for id in subscribedConversations {
-            try? await send(.subscribe(conversationID: id))
+            try? await send(.subscribeConversation(ConversationScope(conversationId: id)))
         }
     }
 
-    func broadcast(_ frame: ServerFrame) {
+    func broadcast(_ frame: ServerMessage) {
         for continuation in subscribers.values {
             continuation.yield(frame)
         }
     }
 
-    func decodeFrame(from message: URLSessionWebSocketTask.Message) -> ServerFrame? {
+    func decodeFrame(from message: URLSessionWebSocketTask.Message) -> ServerMessage? {
         let data: Data? = switch message {
         case .data(let data): data
         case .string(let string): Data(string.utf8)
         @unknown default: nil
         }
-        guard let data, let envelope = try? decoder.decode(RawFrame.self, from: data) else { return nil }
-        guard let type = ServerFrameType(rawValue: envelope.type) else { return nil }
-        return ServerFrame(type: type, payload: envelope.payload)
+        guard let data else { return nil }
+        return try? decoder.decode(ServerMessage.self, from: data)
     }
-
 }
 
 extension WebSocketClient {
-    /// The contract caps backoff at 30s starting from 1s.
     static func backoffDelay(forAttempt attempt: Int) -> Duration {
         let exponential = min(30, pow(2, Double(attempt)))
         let jittered = exponential * Double.random(in: 0.8...1.2)
         return .milliseconds(Int(min(30, max(1, jittered)) * 1_000))
-    }
-}
-
-private struct RawFrame: Decodable {
-    let type: String
-    let payload: Data?
-
-    private enum CodingKeys: String, CodingKey {
-        case type
-        case payload
-    }
-
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        type = try container.decode(String.self, forKey: .type)
-        if let nested = try? container.decode(AnyJSON.self, forKey: .payload) {
-            payload = nested.data
-        } else {
-            payload = nil
-        }
-    }
-}
-
-/// Keeps a frame's payload as raw bytes so the team that owns its DTO decodes it.
-private struct AnyJSON: Decodable {
-    let data: Data
-
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let json = try container.decode(JSONValue.self)
-        data = try JSONEncoder().encode(json)
     }
 }

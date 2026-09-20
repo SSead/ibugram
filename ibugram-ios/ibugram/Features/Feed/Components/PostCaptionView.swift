@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct PostCaptionView: View {
     let post: Post

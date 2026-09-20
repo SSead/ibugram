@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct ChangeUsernameView: View {
     let currentUsername: String

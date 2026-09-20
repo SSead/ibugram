@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 /// The body every tab placeholder shares: who owns the tab, what it becomes, and live proof that
 /// pushing a `Route` works from here.

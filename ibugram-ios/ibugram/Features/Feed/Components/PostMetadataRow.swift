@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct PostMetadataRow: View {
     let post: Post

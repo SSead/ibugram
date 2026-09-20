@@ -1,19 +1,21 @@
 import SwiftUI
+import IBUgramKit
 
 struct SettingsView: View {
     @Environment(\.theme) private var theme
     @Environment(AuthSessionStore.self) private var session
-    @State private var appearance = AppearanceSettingsStore()
-    @State private var appLock = AppLockSettingsStore()
-    @State private var isEditingProfile = false
-    @State private var isChangingUsername = false
+    @Environment(Router.self) private var router
+    @Environment(AppearanceSettingsStore.self) private var appearance
+    @Environment(AppLockSettingsStore.self) private var appLock
     @State private var confirmSignOut = false
 
     var body: some View {
-        List {
+        let appearance = Bindable(appearance)
+        let appLock = Bindable(appLock)
+        return List {
             accountSection
-            securitySection
-            appearanceSection
+            securitySection(appLock: appLock)
+            appearanceSection(appearance: appearance)
             privacySection
             aboutSection
             signOutSection
@@ -21,8 +23,6 @@ struct SettingsView: View {
         .listStyle(.insetGrouped)
         .tint(theme.colors.brand)
         .navigationTitle("Settings")
-        .sheet(isPresented: $isEditingProfile) { editProfileSheet }
-        .sheet(isPresented: $isChangingUsername) { usernameSheet }
         .confirmationDialog("Sign out of IBUgram?", isPresented: $confirmSignOut, titleVisibility: .visible) {
             Button("Sign out", role: .destructive) {
                 Task { await session.signOut() }
@@ -35,14 +35,14 @@ struct SettingsView: View {
     private var accountSection: some View {
         Section("Account") {
             Button {
-                isEditingProfile = true
+                router.push(.editProfile)
             } label: {
                 Label("Edit Profile", systemImage: "person.crop.circle")
             }
             .accessibilityHint("Change your display name, bio and photo")
 
             Button {
-                isChangingUsername = true
+                router.push(.changeUsername)
             } label: {
                 LabeledContent("Username", value: session.currentUser.map { "@\($0.username)" } ?? "—")
             }
@@ -50,25 +50,25 @@ struct SettingsView: View {
         }
     }
 
-    private var securitySection: some View {
+    private func securitySection(appLock: Bindable<AppLockSettingsStore>) -> some View {
         Section("Security") {
-            NavigationLink {
-                ActiveSessionsView()
+            Button {
+                router.push(.activeSessions)
             } label: {
                 Label("Active sessions", systemImage: "laptopcomputer.and.iphone")
             }
 
-            Toggle(isOn: $appLock.isEnabled) {
-                Label("Lock with \(appLock.biometryTitle)", systemImage: "lock.fill")
+            Toggle(isOn: appLock.isEnabled) {
+                Label("Lock with \(self.appLock.biometryTitle)", systemImage: "lock.fill")
             }
-            .disabled(!appLock.isBiometryAvailable)
+            .disabled(!self.appLock.isBiometryAvailable)
             .accessibilityHint("Require biometrics when opening IBUgram")
         }
     }
 
-    private var appearanceSection: some View {
+    private func appearanceSection(appearance: Bindable<AppearanceSettingsStore>) -> some View {
         Section("Appearance") {
-            Picker("Appearance", selection: $appearance.preference) {
+            Picker("Appearance", selection: appearance.preference) {
                 ForEach(AppearancePreference.allCases) { option in
                     Text(option.title).tag(option)
                 }
@@ -80,8 +80,8 @@ struct SettingsView: View {
 
     private var privacySection: some View {
         Section("Privacy") {
-            NavigationLink {
-                BlockedAccountsView()
+            Button {
+                router.push(.blockedAccounts)
             } label: {
                 Label("Blocked accounts", systemImage: "nosign")
             }
@@ -114,41 +114,21 @@ struct SettingsView: View {
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
         return "\(short) (\(build))"
     }
-
-    @ViewBuilder
-    private var editProfileSheet: some View {
-        if let user = session.currentUser {
-            NavigationStack {
-                EditProfileView(user: user) { updated in
-                    session.update(user: updated)
-                    isEditingProfile = false
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var usernameSheet: some View {
-        if let user = session.currentUser {
-            NavigationStack {
-                ChangeUsernameView(currentUsername: user.username) { updated in
-                    session.update(user: updated)
-                    isChangingUsername = false
-                }
-            }
-        }
-    }
 }
 
 #Preview("Settings") {
     TabNavigationStack { SettingsView() }
         .appContainer(.preview(api: MockAPIClient(stubs: SettingsFixtures.stubs)))
         .environment(AuthSessionStore(container: .preview()))
+        .environment(AppearanceSettingsStore())
+        .environment(AppLockSettingsStore())
 }
 
 #Preview("Settings · dark") {
     TabNavigationStack { SettingsView() }
         .appContainer(.preview(api: MockAPIClient(stubs: SettingsFixtures.stubs)))
         .environment(AuthSessionStore(container: .preview()))
+        .environment(AppearanceSettingsStore())
+        .environment(AppLockSettingsStore())
         .preferredColorScheme(.dark)
 }

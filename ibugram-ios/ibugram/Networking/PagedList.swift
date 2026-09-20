@@ -1,17 +1,16 @@
 import Foundation
+import IBUgramKit
 
-/// Drives infinite scroll for any `Page`-returning endpoint. Feature teams own the closure,
-/// not the paging logic.
 @MainActor
 @Observable
-final class Paginated<Item: Decodable & Sendable & Identifiable> {
+final class PagedList<Item: Decodable & Sendable & Identifiable> {
     private(set) var items: [Item] = []
     private(set) var phase: Phase = .idle
     private(set) var isLoadingMore = false
     private(set) var nextCursor: String?
     private(set) var hasReachedEnd = false
 
-    private let loadPage: @Sendable (_ cursor: String?) async throws -> Page<Item>
+    private let loadPage: @Sendable (_ cursor: String?) async throws -> Paginated<Item>
 
     enum Phase: Equatable {
         case idle
@@ -20,7 +19,7 @@ final class Paginated<Item: Decodable & Sendable & Identifiable> {
         case failed(APIError)
     }
 
-    init(loadPage: @escaping @Sendable (_ cursor: String?) async throws -> Page<Item>) {
+    init(loadPage: @escaping @Sendable (_ cursor: String?) async throws -> Paginated<Item>) {
         self.loadPage = loadPage
     }
 

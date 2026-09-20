@@ -1,5 +1,6 @@
 import Foundation
 import LocalAuthentication
+import IBUgramKit
 
 @MainActor
 @Observable
@@ -20,16 +21,18 @@ final class AppLockSettingsStore {
         }
     }
 
-    var isBiometryAvailable: Bool { biometryType != .none || canEvaluate }
+    var isBiometryAvailable: Bool { canUseBiometrics }
+
+    var shouldLock: Bool { isEnabled && canUseBiometrics }
 
     private let biometryType: LABiometryType
-    private let canEvaluate: Bool
+    private let canUseBiometrics: Bool
 
     init(defaults: UserDefaults = .standard, context: LAContext = LAContext()) {
         self.defaults = defaults
         isEnabled = defaults.bool(forKey: key)
         var error: NSError?
-        canEvaluate = context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error)
+        canUseBiometrics = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
         biometryType = context.biometryType
     }
 }
@@ -37,7 +40,7 @@ final class AppLockSettingsStore {
 @MainActor
 @Observable
 final class ActiveSessionsViewModel: ErrorPresenting {
-    private(set) var sessions: [DeviceSession] = []
+    private(set) var sessions: [Session] = []
     private(set) var phase: Phase = .idle
     var presentedError: PresentedError?
 
@@ -57,19 +60,19 @@ final class ActiveSessionsViewModel: ErrorPresenting {
     func load() async {
         phase = .loading
         do {
-            sessions = try await api.send(SettingsEndpoints.Sessions())
+            sessions = try await api.send(AuthEndpoint.Sessions())
             phase = .loaded
         } catch {
             phase = .failed(error.asAPIError)
         }
     }
 
-    func revoke(_ session: DeviceSession) async {
+    func revoke(_ session: Session) async {
         guard !session.isCurrent else { return }
         let previous = sessions
         sessions.removeAll { $0.id == session.id }
         do {
-            _ = try await api.send(SettingsEndpoints.RevokeSession(id: session.id))
+            _ = try await api.send(AuthEndpoint.RevokeSession(id: session.id))
         } catch {
             sessions = previous
             present(error) { [weak self] in await self?.revoke(session) }

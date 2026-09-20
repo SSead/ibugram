@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct FollowListView: View {
     let username: String
@@ -22,8 +23,10 @@ struct FollowListView: View {
         .background(theme.colors.background)
         .navigationTitle(kind.title)
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { attachViewModel() }
-        .task { await viewModel?.load() }
+        .task {
+            attachViewModel()
+            await viewModel?.load()
+        }
     }
 
     private func list(_ viewModel: FollowListViewModel) -> some View {

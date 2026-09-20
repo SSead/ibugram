@@ -4,6 +4,8 @@ struct RootView: View {
     @Environment(\.appContainer) private var container
     @Environment(\.theme) private var theme
     @State private var session: AuthSessionStore?
+    @State private var appearance = AppearanceSettingsStore()
+    @State private var appLock = AppLockSettingsStore()
 
     var body: some View {
         ZStack {
@@ -15,6 +17,9 @@ struct RootView: View {
                 LaunchView()
             }
         }
+        .environment(appearance)
+        .environment(appLock)
+        .preferredColorScheme(appearance.colorScheme)
         .task { await startSessionIfNeeded() }
     }
 

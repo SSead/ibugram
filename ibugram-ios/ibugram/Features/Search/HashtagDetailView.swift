@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct HashtagDetailView: View {
     let tag: String
@@ -19,10 +20,11 @@ struct HashtagDetailView: View {
         .background(theme.colors.background)
         .navigationTitle("#\(tag)")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            viewModel = viewModel ?? HashtagDetailViewModel(api: container.api, tag: tag)
+        .task {
+            let model = viewModel ?? HashtagDetailViewModel(api: container.api, tag: tag)
+            viewModel = model
+            await model.load()
         }
-        .task { await viewModel?.load() }
     }
 
     private func grid(_ viewModel: HashtagDetailViewModel) -> some View {

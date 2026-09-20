@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum ActivityPeriod: String, Sendable, Identifiable {
     case today = "Today"
@@ -10,7 +11,7 @@ enum ActivityPeriod: String, Sendable, Identifiable {
 
 struct ActivityGroup: Identifiable, Sendable, Equatable {
     let period: ActivityPeriod
-    let items: [ActivityNotification]
+    let items: [IBUgramKit.Notification]
 
     var id: ActivityPeriod { period }
 }
@@ -24,15 +25,12 @@ final class ActivityBadgeStore {
         unreadCount = max(count, 0)
     }
 
-    /// Call when a `notification_created` WebSocket frame arrives. Activity does not subscribe
-    /// to the socket; the realtime owner should decode the payload and forward it here.
-    func applyNotificationCreated(_ notification: ActivityNotification) {
+    func applyNotificationCreated(_ notification: IBUgramKit.Notification) {
         if !notification.isRead {
             unreadCount += 1
         }
     }
 
-    /// Call when an `unread_count_changed` frame arrives, using `payload.notifications`.
     func applyUnreadCountChanged(notifications: Int) {
         unreadCount = max(notifications, 0)
     }
@@ -44,13 +42,13 @@ final class ActivityBadgeStore {
 
 enum ActivityGrouping {
     static func groups(
-        from items: [ActivityNotification],
+        from items: [IBUgramKit.Notification],
         now: Date = .now,
         calendar: Calendar = .current
     ) -> [ActivityGroup] {
-        var today: [ActivityNotification] = []
-        var thisWeek: [ActivityNotification] = []
-        var earlier: [ActivityNotification] = []
+        var today: [IBUgramKit.Notification] = []
+        var thisWeek: [IBUgramKit.Notification] = []
+        var earlier: [IBUgramKit.Notification] = []
 
         let startOfToday = calendar.startOfDay(for: now)
         let weekStart = calendar.date(byAdding: .day, value: -7, to: startOfToday) ?? startOfToday
@@ -76,7 +74,7 @@ enum ActivityGrouping {
 @MainActor
 @Observable
 final class ActivityViewModel: ErrorPresenting {
-    let feed: Paginated<ActivityNotification>
+    let feed: PagedList<IBUgramKit.Notification>
     let badge: ActivityBadgeStore
     var presentedError: PresentedError?
     private(set) var locallyReadIDs: Set<UUID> = []
@@ -97,7 +95,7 @@ final class ActivityViewModel: ErrorPresenting {
         self.badge = badge
         self.now = now
         self.calendar = calendar
-        feed = Paginated { cursor in
+        feed = PagedList { cursor in
             try await api.send(NotificationEndpoints.List(cursor: cursor))
         }
     }
@@ -131,7 +129,7 @@ final class ActivityViewModel: ErrorPresenting {
         }
     }
 
-    func ingestNotificationCreated(_ notification: ActivityNotification) {
+    func ingestNotificationCreated(_ notification: IBUgramKit.Notification) {
         badge.applyNotificationCreated(notification)
     }
 
@@ -159,7 +157,7 @@ final class ActivityViewModel: ErrorPresenting {
         }
     }
 
-    func isRead(_ item: ActivityNotification) -> Bool {
+    func isRead(_ item: IBUgramKit.Notification) -> Bool {
         item.isRead || locallyReadIDs.contains(item.id)
     }
 

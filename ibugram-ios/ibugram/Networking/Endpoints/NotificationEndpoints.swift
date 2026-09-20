@@ -1,8 +1,9 @@
 import Foundation
+import IBUgramKit
 
 enum NotificationEndpoints {
     struct List: Endpoint {
-        typealias Response = Page<ActivityNotification>
+        typealias Response = Paginated<IBUgramKit.Notification>
 
         var cursor: String?
         var limit: Int = 20
@@ -16,7 +17,7 @@ enum NotificationEndpoints {
     }
 
     struct UnreadCount: Endpoint {
-        typealias Response = UnreadCountResponse
+        typealias Response = IBUgramKit.UnreadCount
 
         var path: String { "/notifications/unread-count" }
     }

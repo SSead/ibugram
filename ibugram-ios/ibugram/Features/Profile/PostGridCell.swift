@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct PostGridCell: View {
     let post: Post
@@ -18,7 +19,7 @@ struct PostGridCell: View {
     private var image: some View {
         if let cover = post.cover {
             RemoteImage(
-                url: cover.thumbnailUrl,
+                url: cover.thumbnailURL,
                 blurhash: cover.blurhash,
                 altText: cover.altText ?? post.caption,
                 contentMode: .fill

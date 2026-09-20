@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct FollowListRow: View {
     let user: User
@@ -13,7 +14,7 @@ struct FollowListRow: View {
             Button(action: onOpen) {
                 HStack(spacing: theme.spacing.sm) {
                     AvatarView(
-                        url: user.avatarUrl,
+                        url: user.avatarURL,
                         displayName: user.displayName,
                         size: .medium,
                         showsVerifiedBadge: user.role == .faculty || user.isVerified

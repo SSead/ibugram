@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 enum AppearancePreference: String, CaseIterable, Identifiable, Sendable {
     case system
@@ -23,9 +24,14 @@ final class AppearanceSettingsStore {
     private let defaults: UserDefaults
 
     var preference: AppearancePreference {
-        didSet {
-            defaults.set(preference.rawValue, forKey: key)
-            applyToOpenWindows()
+        didSet { defaults.set(preference.rawValue, forKey: key) }
+    }
+
+    var colorScheme: ColorScheme? {
+        switch preference {
+        case .system: nil
+        case .light: .light
+        case .dark: .dark
         }
     }
 
@@ -36,33 +42,5 @@ final class AppearanceSettingsStore {
         } else {
             preference = .system
         }
-        applyToOpenWindows()
-    }
-
-    /// Apply at the window so appearance works without editing `AppShellView`.
-    func applyToOpenWindows() {
-        #if canImport(UIKit)
-        applyUserInterfaceStyle()
-        #endif
     }
 }
-
-#if canImport(UIKit)
-import UIKit
-
-private extension AppearanceSettingsStore {
-    func applyUserInterfaceStyle() {
-        let style: UIUserInterfaceStyle = switch preference {
-        case .system: .unspecified
-        case .light: .light
-        case .dark: .dark
-        }
-        for scene in UIApplication.shared.connectedScenes {
-            guard let windowScene = scene as? UIWindowScene else { continue }
-            for window in windowScene.windows {
-                window.overrideUserInterfaceStyle = style
-            }
-        }
-    }
-}
-#endif

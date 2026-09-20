@@ -1,7 +1,5 @@
 import Foundation
 
-/// The single typed navigation vocabulary for the whole app. Adding a screen means adding a
-/// case here and a branch in `RouteDestinationView` — never a bespoke `NavigationLink(destination:)`.
 enum Route: Hashable, Sendable {
     case profile(username: String)
     case followers(username: String)
@@ -19,5 +17,8 @@ enum Route: Hashable, Sendable {
     case messageRequests
     case savedPosts
     case settings
+    case editProfile
+    case changeUsername
+    case blockedAccounts
     case activeSessions
 }

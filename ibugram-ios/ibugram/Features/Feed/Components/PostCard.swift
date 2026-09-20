@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct PostCard: View {
     let post: Post
@@ -12,6 +13,12 @@ struct PostCard: View {
                 post: post,
                 onAuthor: actions.onAuthor,
                 onDelete: actions.onDelete
+            )
+            PostContextChips(
+                post: post,
+                onSpace: actions.onSpace,
+                onEvent: actions.onEvent,
+                onLocation: actions.onLocation
             )
             PostMediaCarousel(media: post.media, onDoubleTap: actions.onDoubleTapLike)
             PostActionBar(
@@ -74,7 +81,7 @@ struct PostCard: View {
     .appContainer(.preview())
 }
 
-#Preview("Post card · liked") {
+#Preview("Post card · chips") {
     ScrollView {
         PostCard(post: FeedFixtures.liked)
     }

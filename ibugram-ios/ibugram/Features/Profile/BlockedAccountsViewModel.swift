@@ -1,10 +1,11 @@
 import Foundation
+import IBUgramKit
 
 @MainActor
 @Observable
 final class BlockedAccountsViewModel: ErrorPresenting {
     private(set) var users: [User] = []
-    private(set) var phase: Paginated<User>.Phase = .idle
+    private(set) var phase: PagedList<User>.Phase = .idle
     var presentedError: PresentedError?
 
     private let api: any APIRequesting

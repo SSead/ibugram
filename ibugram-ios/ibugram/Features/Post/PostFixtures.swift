@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum PostFixtures {
     static let rootComment = Comment(

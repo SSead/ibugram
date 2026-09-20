@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct PostDetailView: View {
     let postID: UUID
@@ -12,13 +13,19 @@ struct PostDetailView: View {
         Group {
             if let viewModel {
                 content(viewModel)
+            } else {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .background(theme.colors.background)
         .navigationTitle("Post")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { viewModel = viewModel ?? PostDetailViewModel(api: container.api, postID: postID) }
-        .task { await viewModel?.load() }
+        .task {
+            let model = viewModel ?? PostDetailViewModel(api: container.api, postID: postID)
+            viewModel = model
+            await model.load()
+        }
     }
 
     private func content(_ viewModel: PostDetailViewModel) -> some View {
@@ -116,7 +123,10 @@ struct PostDetailView: View {
             onAuthor: { router.push(.profile(username: post.author.username)) },
             onHashtag: { router.push(.hashtag(tag: $0)) },
             onMention: { router.push(.profile(username: $0)) },
-            onLikeCount: { router.push(.postLikes(postID: post.id)) }
+            onLikeCount: { router.push(.postLikes(postID: post.id)) },
+            onSpace: { router.push(.space(slug: $0.slug)) },
+            onEvent: { router.push(.event(id: $0.id)) },
+            onLocation: { _ in router.push(.campusMap) }
         )
     }
 }

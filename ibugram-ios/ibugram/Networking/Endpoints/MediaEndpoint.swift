@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum MediaEndpoint {
     /// `POST /media` is `multipart/form-data` with a `file` field; max 10 MB, JPEG/PNG/HEIC.

@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum SearchEndpoints {
     struct Query: Endpoint {
@@ -17,13 +18,13 @@ enum SearchEndpoints {
     }
 
     struct Trending: Endpoint {
-        typealias Response = Page<Hashtag>
+        typealias Response = Paginated<Hashtag>
 
         var path: String { "/search/trending" }
     }
 
     struct HashtagPosts: Endpoint {
-        typealias Response = Page<Post>
+        typealias Response = Paginated<Post>
 
         let tag: String
         var cursor: String?

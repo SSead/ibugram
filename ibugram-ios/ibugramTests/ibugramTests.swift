@@ -2,6 +2,7 @@ import Foundation
 import Testing
 
 @testable import ibugram
+import IBUgramKit
 
 @Suite("Email domain validation")
 struct EmailDomainValidatorTests {
@@ -41,30 +42,30 @@ struct APIErrorMappingTests {
     @Test("a documented error code maps to its typed case")
     func documentedCodeMapsToTypedCase() throws {
         let json = Data(#"{"error":{"code":"otp_expired","message":"That code has expired."}}"#.utf8)
-        let envelope = try JSONDecoder.ibugram.decode(APIErrorEnvelope.self, from: json)
-        #expect(APIError(envelope: envelope, statusCode: 400, retryAfter: nil) == .otpExpired)
+        let envelope = try JSONDecoder.ibugram.decode(ibugram.APIErrorEnvelope.self, from: json)
+        #expect(ibugram.APIError(envelope: envelope, statusCode: 400, retryAfter: nil) == .otpExpired)
     }
 
     @Test("a throttle response carries the Retry-After hint")
     func throttleCarriesRetryAfter() throws {
         let json = Data(#"{"error":{"code":"otp_throttled","message":"Too many requests."}}"#.utf8)
-        let envelope = try JSONDecoder.ibugram.decode(APIErrorEnvelope.self, from: json)
-        #expect(APIError(envelope: envelope, statusCode: 429, retryAfter: 42) == .otpThrottled(retryAfter: 42))
+        let envelope = try JSONDecoder.ibugram.decode(ibugram.APIErrorEnvelope.self, from: json)
+        #expect(ibugram.APIError(envelope: envelope, statusCode: 429, retryAfter: 42) == .otpThrottled(retryAfter: 42))
     }
 
     @Test("an unknown code degrades to a server error rather than crashing")
     func unknownCodeDegradesToServerError() throws {
         let json = Data(#"{"error":{"code":"teapot","message":"I am a teapot."}}"#.utf8)
-        let envelope = try JSONDecoder.ibugram.decode(APIErrorEnvelope.self, from: json)
+        let envelope = try JSONDecoder.ibugram.decode(ibugram.APIErrorEnvelope.self, from: json)
         #expect(
-            APIError(envelope: envelope, statusCode: 418, retryAfter: nil)
+            ibugram.APIError(envelope: envelope, statusCode: 418, retryAfter: nil)
                 == .server(status: 418, code: "teapot", message: "I am a teapot.")
         )
     }
 
     @Test("the server message is never surfaced verbatim for a documented code")
     func documentedCodeUsesLocalCopy() {
-        #expect(APIError.domainNotAllowed.userFacingDescription.contains("ibu.edu.ba"))
+        #expect(ibugram.APIError.domainNotAllowed.userFacingDescription.contains("ibu.edu.ba"))
     }
 }
 
@@ -99,7 +100,7 @@ struct ContractDecodingTests {
     @Test("a cursor page exposes its continuation token")
     func pageDecodesNextCursor() throws {
         let json = Data(#"{"items":[],"next_cursor":"opaque-cursor"}"#.utf8)
-        let page = try JSONDecoder.ibugram.decode(Page<User>.self, from: json)
+        let page = try JSONDecoder.ibugram.decode(Paginated<User>.self, from: json)
         #expect(page.nextCursor == "opaque-cursor")
         #expect(page.items.isEmpty)
     }
@@ -139,7 +140,7 @@ struct MockAPIClientTests {
     @Test("an unstubbed endpoint fails loudly so previews cannot silently pass")
     func unstubbedEndpointThrows() async {
         let client = MockAPIClient(stubs: [:])
-        await #expect(throws: APIError.notFound) {
+        await #expect(throws: ibugram.APIError.notFound) {
             _ = try await client.send(UserEndpoint.me())
         }
     }

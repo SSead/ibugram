@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum UserEndpoint {
     struct Me: Endpoint {
@@ -20,7 +21,7 @@ enum UserEndpoint {
         var path: String { "/users/me" }
         var body: HTTPBody? {
             .json(
-                Payload(
+                UpdateProfileBody(
                     displayName: displayName,
                     bio: bio,
                     department: department,
@@ -28,14 +29,6 @@ enum UserEndpoint {
                     avatarMediaId: avatarMediaId
                 )
             )
-        }
-
-        private struct Payload: Encodable, Sendable {
-            let displayName: String?
-            let bio: String?
-            let department: String?
-            let yearOfStudy: Int?
-            let avatarMediaId: UUID?
         }
     }
 
@@ -46,11 +39,7 @@ enum UserEndpoint {
 
         var method: HTTPMethod { .post }
         var path: String { "/users/me/username" }
-        var body: HTTPBody? { .json(Payload(username: username)) }
-
-        private struct Payload: Encodable, Sendable {
-            let username: String
-        }
+        var body: HTTPBody? { .json(SetUsernameBody(username: username)) }
     }
 
     struct Profile: Endpoint {
@@ -63,7 +52,7 @@ enum UserEndpoint {
 
     /// Canonical cursor-paginated endpoint. Copy this shape for every list in the contract.
     struct Followers: Endpoint {
-        typealias Response = Page<User>
+        typealias Response = Paginated<User>
 
         let username: String
         var cursor: String?

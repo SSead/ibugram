@@ -1,8 +1,10 @@
 import SwiftUI
+import IBUgramKit
 
 struct ProfileView: View {
     let username: String
     var previewCurrentUser: User?
+    var initialTab: ProfileContentTab = .posts
 
     @Environment(\.appContainer) private var container
     @Environment(\.theme) private var theme
@@ -17,8 +19,10 @@ struct ProfileView: View {
         content
             .background(theme.colors.background)
             .navigationBarTitleDisplayMode(.inline)
-            .onAppear { attachViewModel() }
-            .task { await viewModel?.load() }
+            .task {
+                attachViewModel()
+                await viewModel?.load()
+            }
             .sheet(isPresented: $isEditing) { editSheet }
             .confirmationDialog("Block this account?", isPresented: $confirmBlock, titleVisibility: .visible) {
                 Button(blockActionTitle, role: .destructive) {
@@ -31,7 +35,7 @@ struct ProfileView: View {
                 get: { reportReason != nil },
                 set: { if !$0 { reportReason = nil } }
             ), titleVisibility: .visible) {
-                ForEach(ReportReason.allCases) { reason in
+                ForEach(ReportReason.allCases, id: \.self) { reason in
                     Button(reason.title) {
                         Task { await viewModel?.report(reason: reason) }
                         reportReason = nil
@@ -139,7 +143,8 @@ struct ProfileView: View {
         viewModel = viewModel ?? ProfileViewModel(
             api: container.api,
             username: username,
-            currentUser: previewCurrentUser ?? session.currentUser
+            currentUser: previewCurrentUser ?? session.currentUser,
+            initialTab: initialTab
         )
     }
 

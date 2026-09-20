@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 @MainActor
 @Observable
@@ -15,7 +16,7 @@ final class PostDetailViewModel: ErrorPresenting {
 
     private let api: any APIRequesting
     private let postID: UUID
-    private let commentsPage: Paginated<Comment>
+    private let commentsPage: PagedList<Comment>
     private var commentEngagement: [UUID: CommentEngagement] = [:]
     private var inFlightCommentLikes: Set<UUID> = []
 
@@ -28,7 +29,7 @@ final class PostDetailViewModel: ErrorPresenting {
     init(api: any APIRequesting, postID: UUID) {
         self.api = api
         self.postID = postID
-        self.commentsPage = Paginated { cursor in
+        self.commentsPage = PagedList { cursor in
             try await api.send(PostEndpoint.comments(postID: postID, cursor: cursor))
         }
     }

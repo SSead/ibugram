@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 @MainActor
 final class BlockedAccountsStore {

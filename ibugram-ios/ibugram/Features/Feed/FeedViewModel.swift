@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum FeedKind: String, CaseIterable, Identifiable, Sendable {
     case following
@@ -34,8 +35,8 @@ final class FeedViewModel: ErrorPresenting {
     var selectedKind: FeedKind = .following
     var presentedError: PresentedError?
 
-    private let followingFeed: Paginated<Post>
-    private let discoverFeed: Paginated<Post>
+    private let followingFeed: PagedList<Post>
+    private let discoverFeed: PagedList<Post>
     private let api: any APIRequesting
     private let happeningNow: @Sendable () -> [Event]
     private var engagement: [UUID: PostEngagement] = [:]
@@ -48,15 +49,15 @@ final class FeedViewModel: ErrorPresenting {
     ) {
         self.api = api
         self.happeningNow = happeningNow
-        self.followingFeed = Paginated { cursor in
+        self.followingFeed = PagedList { cursor in
             try await api.send(FeedEndpoint.following(cursor: cursor))
         }
-        self.discoverFeed = Paginated { cursor in
+        self.discoverFeed = PagedList { cursor in
             try await api.send(FeedEndpoint.discover(cursor: cursor))
         }
     }
 
-    var phase: Paginated<Post>.Phase { feed.phase }
+    var phase: PagedList<Post>.Phase { feed.phase }
     var isLoadingMore: Bool { feed.isLoadingMore }
     var isEmpty: Bool { feed.isEmpty }
     var hasReachedEnd: Bool { feed.hasReachedEnd }
@@ -138,7 +139,7 @@ final class FeedViewModel: ErrorPresenting {
         }
     }
 
-    private var feed: Paginated<Post> {
+    private var feed: PagedList<Post> {
         switch selectedKind {
         case .following: followingFeed
         case .discover: discoverFeed

@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum ProfileFixtures {
     static let currentUser: User = {
@@ -30,7 +31,7 @@ enum ProfileFixtures {
         yearOfStudy: 3,
         isVerified: false,
         counts: UserCounts(posts: 18, followers: 240, following: 190),
-        viewer: ViewerRelationship(isFollowing: true, isFollowedBy: true, isBlocked: false),
+        viewer: UserViewerState(isFollowing: true, isFollowedBy: true, isBlocked: false),
         createdAt: Date(timeIntervalSince1970: 1_720_000_000)
     )
 
@@ -127,11 +128,11 @@ enum ProfileFixtures {
         [
             "GET /users/me": currentUser,
             "GET /users/\(user.username)": user,
-            "GET /users/\(user.username)/posts": Page(items: posts),
-            "GET /users/\(user.username)/tagged": Page(items: tagged),
-            "GET /users/\(user.username)/followers": Page(items: followers),
-            "GET /users/\(user.username)/following": Page(items: following),
-            "GET /me/saved": Page(items: saved),
+            "GET /users/\(user.username)/posts": Paginated(items: posts),
+            "GET /users/\(user.username)/tagged": Paginated(items: tagged),
+            "GET /users/\(user.username)/followers": Paginated(items: followers),
+            "GET /users/\(user.username)/following": Paginated(items: following),
+            "GET /me/saved": Paginated(items: saved),
             "PATCH /users/me": currentUser,
             "POST /users/me/username": currentUser
         ]
@@ -154,7 +155,7 @@ enum ProfileFixtures {
         )
     }
 
-    static func mediaURL(_ name: String) -> URL {
-        URL(string: "https://preview.ibugram.invalid/media/\(name).jpg") ?? URL(fileURLWithPath: "/")
+    static func mediaURL(_ name: String) -> String {
+        "https://preview.ibugram.invalid/media/\(name).jpg"
     }
 }

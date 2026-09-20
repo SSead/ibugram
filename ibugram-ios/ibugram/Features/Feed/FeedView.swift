@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct FeedView: View {
     @Environment(\.appContainer) private var container
@@ -11,11 +12,17 @@ struct FeedView: View {
         Group {
             if let viewModel {
                 content(viewModel)
+            } else {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .background(theme.colors.background)
-        .onAppear { viewModel = viewModel ?? FeedViewModel(api: container.api) }
-        .task { await viewModel?.load() }
+        .task {
+            let model = viewModel ?? FeedViewModel(api: container.api)
+            viewModel = model
+            await model.load()
+        }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 BrandWordmark(height: 22)
@@ -109,6 +116,9 @@ struct FeedView: View {
             onHashtag: { router.push(.hashtag(tag: $0)) },
             onMention: { router.push(.profile(username: $0)) },
             onLikeCount: { router.push(.postLikes(postID: post.id)) },
+            onSpace: { router.push(.space(slug: $0.slug)) },
+            onEvent: { router.push(.event(id: $0.id)) },
+            onLocation: { _ in router.push(.campusMap) },
             onDelete: isOwner ? { Task { await viewModel.delete(post) } } : nil
         )
     }
@@ -123,8 +133,8 @@ struct FeedView: View {
 #Preview("Feed · empty") {
     TabNavigationStack { FeedView() }
         .appContainer(.preview(api: MockAPIClient(stubs: [
-            "GET /feed/following": Page<Post>(items: []),
-            "GET /feed/discover": Page<Post>(items: [])
+            "GET /feed/following": Paginated<Post>(items: []),
+            "GET /feed/discover": Paginated<Post>(items: [])
         ])))
         .environment(AuthSessionStore(container: .preview()))
 }

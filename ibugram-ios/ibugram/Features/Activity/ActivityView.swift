@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct ActivityView: View {
     var badgeStore: ActivityBadgeStore?
@@ -19,8 +20,10 @@ struct ActivityView: View {
         .background(theme.colors.background)
         .navigationTitle("Activity")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { attachViewModel() }
-        .task { await viewModel?.load() }
+        .task {
+            attachViewModel()
+            await viewModel?.load()
+        }
     }
 
     private func loaded(_ viewModel: ActivityViewModel) -> some View {
@@ -64,7 +67,7 @@ struct ActivityView: View {
         .errorAlert(bound.presentedError)
     }
 
-    private func open(_ item: ActivityNotification) {
+    private func open(_ item: IBUgramKit.Notification) {
         if let post = item.post {
             router.push(.post(id: post.id))
             return

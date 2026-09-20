@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum PostEndpoint {
     struct Create: Endpoint {
@@ -65,7 +66,7 @@ enum PostEndpoint {
     }
 
     struct Likes: Endpoint {
-        typealias Response = Page<User>
+        typealias Response = Paginated<User>
 
         let postID: UUID
         var cursor: String?
@@ -80,7 +81,7 @@ enum PostEndpoint {
     }
 
     struct Comments: Endpoint {
-        typealias Response = Page<Comment>
+        typealias Response = Paginated<Comment>
 
         let postID: UUID
         var cursor: String?

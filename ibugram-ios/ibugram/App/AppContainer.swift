@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 struct AppContainer: Sendable {
     let api: any APIRequesting
@@ -32,7 +33,7 @@ extension AppContainer {
     }
 
     static func preview(
-        api: any APIRequesting = MockAPIClient(),
+        api: any APIRequesting = MockAPIClient(stubs: SampleData.previewStubs),
         tokens: TokenPair? = SampleData.tokens
     ) -> AppContainer {
         AppContainer(

@@ -1,6 +1,7 @@
 import Foundation
 import Testing
 @testable import ibugram
+import IBUgramKit
 
 @Suite("Notification grouping")
 struct ActivityGroupingTests {
@@ -51,8 +52,8 @@ struct ActivityViewModelUnreadTests {
     @Test("the badge uses the unread-count endpoint and drops after items are marked read")
     func unreadCountThenMarkRead() async {
         let client = ScriptedAPIClient(stubs: [
-            "GET /notifications": Page(items: ActivityFixtures.all),
-            "GET /notifications/unread-count": UnreadCountResponse(count: 3)
+            "GET /notifications": Paginated(items: ActivityFixtures.all),
+            "GET /notifications/unread-count": UnreadCount(count: 3)
         ])
         let badge = ActivityBadgeStore()
         let viewModel = ActivityViewModel(

@@ -1,7 +1,8 @@
 import SwiftUI
+import IBUgramKit
 
 struct ActivityRow: View {
-    let item: ActivityNotification
+    let item: IBUgramKit.Notification
     var isRead: Bool
     var displayedActor: User?
     var onOpen: () -> Void
@@ -52,11 +53,11 @@ struct ActivityRow: View {
                     .frame(width: 44, height: 44)
                     .background(theme.colors.brandMuted, in: .circle)
             } else if actors.count == 1 {
-                AvatarView(url: actors[0].avatarUrl, displayName: actors[0].displayName, size: .medium)
+                AvatarView(url: actors[0].avatarURL, displayName: actors[0].displayName, size: .medium)
             } else {
-                AvatarView(url: actors[0].avatarUrl, displayName: actors[0].displayName, size: .small)
+                AvatarView(url: actors[0].avatarURL, displayName: actors[0].displayName, size: .small)
                     .offset(x: -theme.spacing.xs, y: -theme.spacing.xxs)
-                AvatarView(url: actors[1].avatarUrl, displayName: actors[1].displayName, size: .small)
+                AvatarView(url: actors[1].avatarURL, displayName: actors[1].displayName, size: .small)
                     .offset(x: theme.spacing.xs, y: theme.spacing.xxs)
             }
         }
@@ -70,7 +71,7 @@ struct ActivityRow: View {
             ProfileFollowButton(user: actor, isCompact: true, onToggle: onFollow)
         } else if let cover = item.post?.cover {
             RemoteImage(
-                url: cover.thumbnailUrl,
+                url: cover.thumbnailURL,
                 blurhash: cover.blurhash,
                 altText: cover.altText,
                 contentMode: .fill

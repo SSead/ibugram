@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct SettingsPlaceholderView: View {
     var body: some View {

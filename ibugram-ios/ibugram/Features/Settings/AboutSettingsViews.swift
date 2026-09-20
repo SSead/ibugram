@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct OnDevicePrivacyView: View {
     @Environment(\.theme) private var theme

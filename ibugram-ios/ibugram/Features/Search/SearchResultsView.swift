@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct SearchResultsView: View {
     let viewModel: SearchViewModel

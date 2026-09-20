@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct PostActionBar: View {
     let post: Post

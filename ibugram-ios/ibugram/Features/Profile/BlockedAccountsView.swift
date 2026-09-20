@@ -1,4 +1,5 @@
 import SwiftUI
+import IBUgramKit
 
 struct BlockedAccountsView: View {
     @Environment(\.appContainer) private var container
@@ -17,10 +18,11 @@ struct BlockedAccountsView: View {
         .background(theme.colors.background)
         .navigationTitle("Blocked accounts")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            viewModel = viewModel ?? BlockedAccountsViewModel(api: container.api)
+        .task {
+            let model = viewModel ?? BlockedAccountsViewModel(api: container.api)
+            viewModel = model
+            await model.load()
         }
-        .task { await viewModel?.load() }
     }
 
     private func content(_ viewModel: BlockedAccountsViewModel) -> some View {

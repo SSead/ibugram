@@ -1,4 +1,5 @@
 import Foundation
+import IBUgramKit
 
 enum FeedFixtures {
     static let campusBlurhash = "LEHV6nWB2yk8pyo0adR*.7kCMdnj"
@@ -121,6 +122,10 @@ enum FeedFixtures {
         media: [lawnPhoto],
         caption: "Golden hour on campus. #burchlife",
         hashtags: ["burchlife"],
+        mentions: [],
+        space: nil,
+        event: nil,
+        location: campusLawn,
         counts: PostCounts(likes: 128, comments: 14),
         viewer: PostViewerState(hasLiked: false, hasSaved: false),
         commentsEnabled: true,
@@ -134,6 +139,10 @@ enum FeedFixtures {
         media: [labPhoto, hallPhoto, lawnPhoto],
         caption: "Build week with @d.kovac and the crew. #robotics #burch",
         hashtags: ["robotics", "burch"],
+        mentions: [SampleData.professorKovac],
+        space: robotics,
+        event: nil,
+        location: nil,
         counts: PostCounts(likes: 86, comments: 9),
         viewer: PostViewerState(hasLiked: false, hasSaved: true),
         commentsEnabled: true,
@@ -165,6 +174,10 @@ enum FeedFixtures {
         media: [lecturePhoto],
         caption: "Office hours moved to C-204 on Wednesday. Bring your #seniordesign drafts.",
         hashtags: ["seniordesign"],
+        mentions: [],
+        space: nil,
+        event: careerFair,
+        location: cafeteria,
         counts: PostCounts(likes: 312, comments: 41),
         viewer: PostViewerState(hasLiked: false, hasSaved: false),
         commentsEnabled: true,
@@ -178,6 +191,10 @@ enum FeedFixtures {
         media: [labPhoto],
         caption: "Shipped the first demo. @d.kovac believed before we did.",
         hashtags: [],
+        mentions: [SampleData.professorKovac],
+        space: robotics,
+        event: openDay,
+        location: campusLawn,
         counts: PostCounts(likes: 201, comments: 22),
         viewer: PostViewerState(hasLiked: true, hasSaved: true),
         commentsEnabled: true,
@@ -190,21 +207,21 @@ enum FeedFixtures {
 
     static var stubs: [String: any Sendable] {
         var stubs = SampleData.defaultStubs
-        stubs["GET /feed/following"] = Page(items: following, nextCursor: nil)
-        stubs["GET /feed/discover"] = Page(items: discover, nextCursor: "discover-2")
+        stubs["GET /feed/following"] = Paginated(items: following, nextCursor: nil)
+        stubs["GET /feed/discover"] = Paginated(items: discover, nextCursor: "discover-2")
         stubs["GET /posts/\(singleImage.id)"] = singleImage
         stubs["GET /posts/\(carousel.id)"] = carousel
         stubs["GET /posts/\(longCaption.id)"] = longCaption
         stubs["GET /posts/\(facultyAuthor.id)"] = facultyAuthor
         stubs["GET /posts/\(liked.id)"] = liked
-        stubs["GET /posts/\(singleImage.id)/comments"] = Page(items: PostFixtures.comments, nextCursor: nil)
-        stubs["GET /posts/\(carousel.id)/comments"] = Page(items: PostFixtures.comments, nextCursor: nil)
-        stubs["GET /posts/\(longCaption.id)/comments"] = Page<Comment>(items: [], nextCursor: nil)
-        stubs["GET /posts/\(facultyAuthor.id)/comments"] = Page(items: PostFixtures.facultyComments, nextCursor: nil)
-        stubs["GET /posts/\(liked.id)/comments"] = Page(items: PostFixtures.comments, nextCursor: nil)
-        stubs["GET /posts/\(singleImage.id)/likes"] = Page(items: SampleData.users, nextCursor: nil)
-        stubs["GET /posts/\(liked.id)/likes"] = Page(items: SampleData.users, nextCursor: nil)
-        stubs["GET /posts/\(facultyAuthor.id)/likes"] = Page(items: SampleData.users, nextCursor: nil)
+        stubs["GET /posts/\(singleImage.id)/comments"] = Paginated(items: PostFixtures.comments, nextCursor: nil)
+        stubs["GET /posts/\(carousel.id)/comments"] = Paginated(items: PostFixtures.comments, nextCursor: nil)
+        stubs["GET /posts/\(longCaption.id)/comments"] = Paginated<Comment>(items: [], nextCursor: nil)
+        stubs["GET /posts/\(facultyAuthor.id)/comments"] = Paginated(items: PostFixtures.facultyComments, nextCursor: nil)
+        stubs["GET /posts/\(liked.id)/comments"] = Paginated(items: PostFixtures.comments, nextCursor: nil)
+        stubs["GET /posts/\(singleImage.id)/likes"] = Paginated(items: SampleData.users, nextCursor: nil)
+        stubs["GET /posts/\(liked.id)/likes"] = Paginated(items: SampleData.users, nextCursor: nil)
+        stubs["GET /posts/\(facultyAuthor.id)/likes"] = Paginated(items: SampleData.users, nextCursor: nil)
         return stubs
     }
 
@@ -212,7 +229,7 @@ enum FeedFixtures {
         UUID(uuidString: string) ?? UUID()
     }
 
-    static func url(_ string: String) -> URL {
-        URL(string: string) ?? URL(fileURLWithPath: "/invalid")
+    static func url(_ string: String) -> String {
+        string
     }
 }
