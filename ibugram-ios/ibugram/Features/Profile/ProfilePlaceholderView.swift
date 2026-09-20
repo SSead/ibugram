@@ -1,37 +1,29 @@
 import SwiftUI
 
 struct ProfilePlaceholderView: View {
-    @Environment(Router.self) private var router
+    @Environment(AuthSessionStore.self) private var session
 
     var body: some View {
-        TeamHandoffView(
-            tab: .profile,
-            owner: "Profiles & Social Graph",
-            brief: "Own profile header, post grid, saved and tagged tabs, followers and following lists.",
-            entryPoint: "ibugram/Features/Profile/ProfilePlaceholderView.swift",
-            sampleRoutes: [
-                ("Open followers", .followers(username: SampleData.amina.username)),
-                ("Open saved posts", .savedPosts)
-            ]
-        )
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button { router.push(.settings) } label: {
-                    Image(systemName: "gearshape")
-                }
-                .accessibilityLabel("Settings")
-            }
+        if let username = session.currentUser?.username, !username.isEmpty {
+            ProfileView(username: username)
+        } else {
+            ProfileView(
+                username: ProfileFixtures.currentUser.username,
+                previewCurrentUser: ProfileFixtures.currentUser
+            )
         }
     }
 }
 
 #Preview("Profile tab") {
     TabNavigationStack { ProfilePlaceholderView() }
-        .appContainer(.preview())
+        .appContainer(.preview(api: MockAPIClient(stubs: ProfileFixtures.ownProfileStubs)))
+        .environment(AuthSessionStore(container: .preview()))
 }
 
 #Preview("Profile tab · dark") {
     TabNavigationStack { ProfilePlaceholderView() }
-        .appContainer(.preview())
+        .appContainer(.preview(api: MockAPIClient(stubs: ProfileFixtures.ownProfileStubs)))
+        .environment(AuthSessionStore(container: .preview()))
         .preferredColorScheme(.dark)
 }

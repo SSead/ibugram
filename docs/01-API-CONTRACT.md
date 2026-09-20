@@ -238,3 +238,79 @@ open. Any gap is reconciled by refetching over REST.
 ## 5. Health
 
 `GET /health` → `{ "status": "ok", "database": "ok", "version": "..." }` (unauthenticated).
+Also served at `GET /api/v1/health` so a client that always prefixes needs no special case.
+
+---
+
+# Amendment 1 — 2026-09-20
+
+Ratified by the Project Owner after the foundation implementation. Everything below is
+part of the contract.
+
+## A1.1 HTTP status codes
+
+The original contract fixed error *codes* but not statuses. Clients must branch on
+`error.code`, never on the status alone, but the mapping is now fixed:
+
+| Code | Status |
+| --- | --- |
+| `validation_failed` | 422 |
+| `otp_invalid`, `otp_expired` | 400 |
+| `unauthorized` | 401 |
+| `forbidden`, `domain_not_allowed` | 403 |
+| `not_found` | 404 |
+| `username_taken`, `conflict` | 409 |
+| `payload_too_large` | 413 |
+| `otp_throttled`, `rate_limited` | 429 |
+| `not_implemented` | 501 |
+| `internal_error` | 500 |
+
+`not_implemented` is added to the canonical code list. It marks an endpoint that is
+registered but not yet built; `details.endpoint` carries the route.
+
+## A1.2 Access tokens may be revoked before they expire
+
+A stateless JWT would stay valid until `exp` even after logout or detected refresh-token
+theft, leaving a thief up to 15 minutes of access after revocation. The authenticator
+therefore also requires the token's session *family* to still exist.
+
+Revocation is per **family**, not per session, so an ordinary refresh does not invalidate
+an access token the client still holds.
+
+**Client requirement:** treat `401` as "attempt a refresh; if that fails, sign out",
+regardless of whether `expires_in` has elapsed. Never trust the clock alone.
+
+## A1.3 `needs_onboarding` is the only onboarding signal
+
+`User.username` and `User.display_name` are non-optional, but an account exists between
+verifying a code and completing onboarding. The server assigns a placeholder username
+(`user_<prefix>`) and derives a display name from the email local part.
+
+**Client requirement:** a populated `username` does **not** mean onboarding is complete.
+Read `needs_onboarding`.
+
+## A1.4 Added endpoints
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| GET | `/media/:id/thumbnail` | Serves the `thumbnail_url` rendition |
+| GET | `/users/:username/available` | Username availability, unauthenticated. Returns `{ "available": Bool }`. Added because onboarding was otherwise forced to probe `GET /users/:username` and read `not_found` as success. |
+| POST | `/reports` | `{ post_id? , comment_id?, user_id?, reason }` — exactly one target. Moderation was in the product spec and data model but missing from the route table. |
+
+## A1.5 Serialization notes
+
+- UUIDs serialize **uppercase** (Foundation's `UUID` encoding). Parsing is
+  case-insensitive; do not compare id strings against lower-cased literals.
+- Full-text search uses PostgreSQL's `simple` configuration, not `english`. English
+  stemming mangles Bosnian words and proper nouns, and Bosnian is not a built-in
+  configuration.
+- `GET /auth/sessions` returns a bare array, not a `Paginated` envelope. Session counts
+  are inherently small.
+- The WebSocket authenticates by `?token=` query parameter and therefore sits outside
+  the bearer-token middleware.
+
+## A1.6 Schema is frozen
+
+The 28-table schema documented in `10-DATA-MODEL.md` covers the whole product. Feature
+teams implement endpoints against it and do **not** add migrations. A genuine schema gap
+is escalated to the Owner.
