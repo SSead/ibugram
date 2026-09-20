@@ -4,6 +4,21 @@ This is the live status page. Newest update at the top.
 
 ---
 
+## 2026-09-20 · 09:50 — Claude budget exhausted; remaining work on Grok only
+
+Opus is at 100% for this session. The two foundation architects already finished and
+are committed. Remaining agents use **Cursor Grok 4.6** (and Composer if needed).
+The Opus messaging agent was interrupted; a Grok agent is completing that layer from
+the files already on disk rather than rewriting it.
+
+**Also landed (not yet committed as a dedicated backend-features commit):**
+Spaces, Events, and `POST /reports` — faculty-only official Spaces (403), capacity-1
+RSVP overflow (409) proven with curl on :8092. Capacity uses `SELECT … FOR UPDATE`.
+
+Still in flight: posts/social-graph backend, iOS DTO integration, messaging finish.
+
+---
+
 ## 2026-09-20 · 09:25 — Phase 2 in flight, one integration debt identified
 
 **Shipped and committed** (3 signed commits, 310 files tracked):

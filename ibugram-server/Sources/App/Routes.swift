@@ -20,6 +20,18 @@ func registerRoutes(_ app: Application) throws {
     try throttledAuth.register(collection: AuthController())
 
     try api.register(collection: UserController())
+    try api.register(collection: FollowController())
+    try api.register(collection: FeedController())
+    try api.register(collection: PostController())
+    try api.register(collection: CommentController())
+    try api.register(collection: SearchController())
     try api.register(collection: MediaController())
+    try api.register(collection: SpaceController())
+    try api.register(collection: EventController())
+    try api.register(collection: ReportController())
+    try api.register(collection: ConversationController())
+    try api.register(collection: MessageController())
+    try api.register(collection: NotificationController())
+    try api.register(collection: RealtimeController())
     try api.register(collection: ReservedEndpointController())
 }

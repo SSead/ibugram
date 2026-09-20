@@ -73,3 +73,23 @@ per-file project edits.
 `project.pbxproj` for each is the single most likely source of merge corruption and
 build breakage across parallel contributors. Synchronized groups eliminate the class of
 problem.
+
+---
+
+### D-005 — Discover ranking formula
+**Date:** 2026-09-20 · **Decided by:** Project Owner (ratifying the posts team)
+
+`GET /feed/discover` ranks posts from the last 21 days (blocked authors excluded):
+
+**score = exp(−age_hours / 36) × (1 + ln(1 + likes) + 1.6 ln(1 + comments)) × department_boost**
+
+Department boost is 1.3 when author and viewer share a department, else 1.0. Tie-break
+is `created_at DESC`, then `id DESC`. Cursors are keyset against the ranked row, not
+offsets.
+
+**Why:** a 36-hour half-life matches campus checking cadence (today plus yesterday).
+Comments outrank likes because they take more effort. Same-department affinity is the
+one university-specific signal a generic Instagram clone would not have.
+
+**Given up:** collaborative filtering and a learned ranker. Those need production
+traffic this project does not have.

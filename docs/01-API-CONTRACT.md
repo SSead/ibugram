@@ -314,3 +314,83 @@ Read `needs_onboarding`.
 The 28-table schema documented in `10-DATA-MODEL.md` covers the whole product. Feature
 teams implement endpoints against it and do **not** add migrations. A genuine schema gap
 is escalated to the Owner.
+
+---
+
+# Amendment 2 — 2026-09-20
+
+Ratified after the client feature teams reported gaps. Unspecified request and response
+shapes are pinned here to whatever the client already assumes, since those screens are
+built and tested.
+
+## A2.1 Pinned request and response bodies
+
+| Endpoint | Shape |
+| --- | --- |
+| `POST /notifications/read` | Request `{ "ids": [UUID] }`. An empty array marks everything read. |
+| `GET /notifications/unread-count` | Response `{ "count": Int }` |
+| `GET /search` | Response `{ "users": [User], "hashtags": [Hashtag], "spaces": [SpaceSummary], "posts": [Post] }`. Each array is capped, and `type` narrows which are populated. |
+| `POST /reports` | Request `{ "post_id"?, "comment_id"?, "user_id"?, "reason" }` — exactly one target. Added to §3 proper; it was only in Amendment 1. |
+
+`Hashtag` is `{ id, tag, post_count }`.
+
+## A2.2 Added endpoints
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| GET | `/users/:username/tagged` | Posts the user is mentioned in. The profile has a Tagged tab and `mentions` already exists in the schema, so the endpoint should exist rather than the tab being cut. |
+| GET | `/users/me/blocked` | The blocked-accounts list in Settings. Was otherwise unreachable, leaving the client to cache blocks on-device — which would be wrong on a second device. |
+
+Both are cursor-paginated.
+
+## A2.3 `Post` must carry its full context
+
+The client's post card cannot render Space, Event or location chips unless `Post`
+includes `space`, `event`, `location` and `mentions` as specified in §2. These are
+**not** optional extras — they are how the standout features surface in the feed. Any
+local client DTO omitting them is a defect to be removed during integration.
+
+---
+
+# Amendment 3 — 2026-09-20
+
+Ratified after Spaces / Events / reports shipped.
+
+## A3.1 `POST /reports` wire format
+
+The request is `{ "post_id"?, "comment_id"?, "user_id"?, "reason" }` with exactly one
+target. The response is `201 { "id": UUID, "status": "open" }`.
+
+`IBUgramKit.ReportBody` currently uses `{ subject, subject_id, reason, detail }`. That
+is a kit bug. The server accepts **both** shapes until the kit is aligned; new client
+code must send the contract shape.
+
+## A3.2 `Event.postId` is derived
+
+The `events` table has no `post_id` column. Posts point at events (`posts.event_id`).
+`Event.postId` on the wire is the oldest post with that `event_id`, or `null`. Do not
+add a column.
+
+## A3.3 Username availability is in the contract, missing from the kit
+
+`GET /users/:username/available` (A1.4) is live on the server. `IBUgramKit.API.Users`
+does not yet declare it. The server registered the path locally. The next kit pass
+must add `API.Users.available(username:)` and a `{ "available": Bool }` DTO so the
+client stops using a parallel `Endpoint`.
+
+## A3.4 Notifications are raised through one service
+
+Other features must not write `notifications` rows themselves. They call:
+
+```
+try await request.notifications.raise(kind, to: recipientId, from: actorId, subject:)
+```
+
+`subject` is `.post(id)`, `.comment(id)`, `.space(id)`, `.event(id)`, or `.none`.
+Returns `nil` (and writes nothing) for self-actions and either-way blocks.
+
+**`group_key`** is unique on `(recipient_id, group_key)`:
+- with a subject: `{kind}:{entity}:{uuid}` (`like:post:{id}`, `reply:comment:{id}`)
+- with `.none`: `{kind}:{yyyy-mm-dd}` UTC day bucket (`follow:2026-09-21`)
+
+Message requests do not increment the inbox unread badge until accepted.

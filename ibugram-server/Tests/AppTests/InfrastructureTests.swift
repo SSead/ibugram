@@ -30,34 +30,24 @@ struct InfrastructureTests {
         }
     }
 
-    @Test("An unimplemented endpoint answers 501 in the contract's envelope")
-    func reservedEndpointsAreStubbed() async throws {
-        try await withTestServer { context in
-            let session = try await context.signIn(as: "amina.hodzic@stu.ibu.edu.ba")
-            let response = try await context.app.testing().sendRequest(
-                .GET,
-                API.Feed.following.fullPath,
-                headers: context.authorized(session.accessToken)
-            )
-            #expect(response.status == .notImplemented)
-            #expect(response.apiError?.code == .unknown("not_implemented"))
-            #expect(response.apiError?.details["endpoint"]?.stringValue == "GET /api/v1/feed/following")
-        }
+    @Test("The reserved list is empty once every contract endpoint is implemented")
+    func reservedEndpointsAreStubbed() {
+        #expect(ReservedEndpointController.reserved.isEmpty)
     }
 
-    @Test("Reserved endpoints still require authentication")
+    @Test("Protected endpoints still require authentication")
     func reservedEndpointsAreProtected() async throws {
         try await withTestServer { context in
-            let response = try await context.app.testing().sendRequest(.GET, API.Feed.discover.fullPath)
+            let response = try await context.app.testing().sendRequest(.GET, API.Conversations.list.fullPath)
             #expect(response.status == .unauthorized)
         }
     }
 
-    @Test("The WebSocket upgrade is stubbed without demanding a bearer header")
+    @Test("The WebSocket upgrade does not demand a bearer header")
     func webSocketStubIsNotBehindHeaderAuth() async throws {
         try await withTestServer { context in
             let response = try await context.app.testing().sendRequest(.GET, API.webSocket.fullPath)
-            #expect(response.status == .notImplemented)
+            #expect(response.status != .unauthorized)
         }
     }
 
