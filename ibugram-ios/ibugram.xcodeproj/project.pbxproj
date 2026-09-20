@@ -1,0 +1,753 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		13BD92DF2B14CF690036323C /* ibugramApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD92DE2B14CF690036323C /* ibugramApp.swift */; };
+		13BD92E32B14CF6A0036323C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13BD92E22B14CF6A0036323C /* Assets.xcassets */; };
+		13BD92E62B14CF6A0036323C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13BD92E52B14CF6A0036323C /* Preview Assets.xcassets */; };
+		13BD92F02B14CF6A0036323C /* ibugramTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD92EF2B14CF6A0036323C /* ibugramTests.swift */; };
+		13BD92FA2B14CF6A0036323C /* ibugramUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD92F92B14CF6A0036323C /* ibugramUITests.swift */; };
+		13BD92FC2B14CF6A0036323C /* ibugramUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD92FB2B14CF6A0036323C /* ibugramUITestsLaunchTests.swift */; };
+		13BD93092B14D0410036323C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 13BD93082B14D0410036323C /* GoogleService-Info.plist */; };
+		13BD930D2B150F270036323C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 13BD930C2B150F270036323C /* FirebaseAuth */; };
+		13BD93102B15145D0036323C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 13BD930F2B15145D0036323C /* GoogleSignIn */; };
+		13BD93122B15145D0036323C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 13BD93112B15145D0036323C /* GoogleSignInSwift */; };
+		13BD93142B1516F10036323C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD93132B1516F10036323C /* AppDelegate.swift */; };
+		13BD931E2B15183A0036323C /* LoginScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD931D2B15183A0036323C /* LoginScreen.swift */; };
+		13BD93232B1518F20036323C /* ProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD93222B1518F20036323C /* ProfileScreen.swift */; };
+		13BD93292B151AE90036323C /* FeedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD93282B151AE90036323C /* FeedScreen.swift */; };
+		13BD932C2B151B320036323C /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD932B2B151B320036323C /* TabBar.swift */; };
+		13BD932F2B151C7D0036323C /* SearchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD932E2B151C7D0036323C /* SearchScreen.swift */; };
+		13BD93322B151C950036323C /* ChatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD93312B151C950036323C /* ChatScreen.swift */; };
+		13BD93342B1525CA0036323C /* +View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD93332B1525CA0036323C /* +View.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		13BD92EC2B14CF6A0036323C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 13BD92D32B14CF690036323C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 13BD92DA2B14CF690036323C;
+			remoteInfo = ibugram;
+		};
+		13BD92F62B14CF6A0036323C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 13BD92D32B14CF690036323C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 13BD92DA2B14CF690036323C;
+			remoteInfo = ibugram;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		13BD92DB2B14CF690036323C /* ibugram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ibugram.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13BD92DE2B14CF690036323C /* ibugramApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ibugramApp.swift; sourceTree = "<group>"; };
+		13BD92E22B14CF6A0036323C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		13BD92E52B14CF6A0036323C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		13BD92EB2B14CF6A0036323C /* ibugramTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ibugramTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		13BD92EF2B14CF6A0036323C /* ibugramTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ibugramTests.swift; sourceTree = "<group>"; };
+		13BD92F52B14CF6A0036323C /* ibugramUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ibugramUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		13BD92F92B14CF6A0036323C /* ibugramUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ibugramUITests.swift; sourceTree = "<group>"; };
+		13BD92FB2B14CF6A0036323C /* ibugramUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ibugramUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		13BD93082B14D0410036323C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		13BD930E2B1513CA0036323C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		13BD93132B1516F10036323C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		13BD931D2B15183A0036323C /* LoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreen.swift; sourceTree = "<group>"; };
+		13BD93222B1518F20036323C /* ProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
+		13BD93282B151AE90036323C /* FeedScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedScreen.swift; sourceTree = "<group>"; };
+		13BD932B2B151B320036323C /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
+		13BD932E2B151C7D0036323C /* SearchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchScreen.swift; sourceTree = "<group>"; };
+		13BD93312B151C950036323C /* ChatScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScreen.swift; sourceTree = "<group>"; };
+		13BD93332B1525CA0036323C /* +View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+View.swift"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		13BD92D82B14CF690036323C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13BD93122B15145D0036323C /* GoogleSignInSwift in Frameworks */,
+				13BD930D2B150F270036323C /* FirebaseAuth in Frameworks */,
+				13BD93102B15145D0036323C /* GoogleSignIn in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		13BD92E82B14CF6A0036323C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		13BD92F22B14CF6A0036323C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		13BD92D22B14CF690036323C = {
+			isa = PBXGroup;
+			children = (
+				13BD92DD2B14CF690036323C /* ibugram */,
+				13BD92EE2B14CF6A0036323C /* ibugramTests */,
+				13BD92F82B14CF6A0036323C /* ibugramUITests */,
+				13BD92DC2B14CF690036323C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		13BD92DC2B14CF690036323C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				13BD92DB2B14CF690036323C /* ibugram.app */,
+				13BD92EB2B14CF6A0036323C /* ibugramTests.xctest */,
+				13BD92F52B14CF6A0036323C /* ibugramUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		13BD92DD2B14CF690036323C /* ibugram */ = {
+			isa = PBXGroup;
+			children = (
+				13BD93212B1518760036323C /* components */,
+				13BD931A2B1518220036323C /* features */,
+				13BD930E2B1513CA0036323C /* Info.plist */,
+				13BD93082B14D0410036323C /* GoogleService-Info.plist */,
+				13BD92DE2B14CF690036323C /* ibugramApp.swift */,
+				13BD92E22B14CF6A0036323C /* Assets.xcassets */,
+				13BD92E42B14CF6A0036323C /* Preview Content */,
+				13BD93132B1516F10036323C /* AppDelegate.swift */,
+			);
+			path = ibugram;
+			sourceTree = "<group>";
+		};
+		13BD92E42B14CF6A0036323C /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				13BD92E52B14CF6A0036323C /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		13BD92EE2B14CF6A0036323C /* ibugramTests */ = {
+			isa = PBXGroup;
+			children = (
+				13BD92EF2B14CF6A0036323C /* ibugramTests.swift */,
+			);
+			path = ibugramTests;
+			sourceTree = "<group>";
+		};
+		13BD92F82B14CF6A0036323C /* ibugramUITests */ = {
+			isa = PBXGroup;
+			children = (
+				13BD92F92B14CF6A0036323C /* ibugramUITests.swift */,
+				13BD92FB2B14CF6A0036323C /* ibugramUITestsLaunchTests.swift */,
+			);
+			path = ibugramUITests;
+			sourceTree = "<group>";
+		};
+		13BD931A2B1518220036323C /* features */ = {
+			isa = PBXGroup;
+			children = (
+				13BD932A2B151B140036323C /* auth */,
+				13BD93252B151AC60036323C /* main */,
+			);
+			path = features;
+			sourceTree = "<group>";
+		};
+		13BD931B2B1518290036323C /* login */ = {
+			isa = PBXGroup;
+			children = (
+				13BD931D2B15183A0036323C /* LoginScreen.swift */,
+				13BD93332B1525CA0036323C /* +View.swift */,
+			);
+			path = login;
+			sourceTree = "<group>";
+		};
+		13BD93212B1518760036323C /* components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = components;
+			sourceTree = "<group>";
+		};
+		13BD93242B1518F70036323C /* profile */ = {
+			isa = PBXGroup;
+			children = (
+				13BD93222B1518F20036323C /* ProfileScreen.swift */,
+			);
+			path = profile;
+			sourceTree = "<group>";
+		};
+		13BD93252B151AC60036323C /* main */ = {
+			isa = PBXGroup;
+			children = (
+				13BD93302B151C850036323C /* chat */,
+				13BD932D2B151C700036323C /* search */,
+				13BD93262B151AD10036323C /* feed */,
+				13BD93242B1518F70036323C /* profile */,
+				13BD932B2B151B320036323C /* TabBar.swift */,
+			);
+			path = main;
+			sourceTree = "<group>";
+		};
+		13BD93262B151AD10036323C /* feed */ = {
+			isa = PBXGroup;
+			children = (
+				13BD93282B151AE90036323C /* FeedScreen.swift */,
+			);
+			path = feed;
+			sourceTree = "<group>";
+		};
+		13BD932A2B151B140036323C /* auth */ = {
+			isa = PBXGroup;
+			children = (
+				13BD931B2B1518290036323C /* login */,
+			);
+			path = auth;
+			sourceTree = "<group>";
+		};
+		13BD932D2B151C700036323C /* search */ = {
+			isa = PBXGroup;
+			children = (
+				13BD932E2B151C7D0036323C /* SearchScreen.swift */,
+			);
+			path = search;
+			sourceTree = "<group>";
+		};
+		13BD93302B151C850036323C /* chat */ = {
+			isa = PBXGroup;
+			children = (
+				13BD93312B151C950036323C /* ChatScreen.swift */,
+			);
+			path = chat;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		13BD92DA2B14CF690036323C /* ibugram */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13BD92FF2B14CF6A0036323C /* Build configuration list for PBXNativeTarget "ibugram" */;
+			buildPhases = (
+				13BD92D72B14CF690036323C /* Sources */,
+				13BD92D82B14CF690036323C /* Frameworks */,
+				13BD92D92B14CF690036323C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ibugram;
+			packageProductDependencies = (
+				13BD930C2B150F270036323C /* FirebaseAuth */,
+				13BD930F2B15145D0036323C /* GoogleSignIn */,
+				13BD93112B15145D0036323C /* GoogleSignInSwift */,
+			);
+			productName = ibugram;
+			productReference = 13BD92DB2B14CF690036323C /* ibugram.app */;
+			productType = "com.apple.product-type.application";
+		};
+		13BD92EA2B14CF6A0036323C /* ibugramTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13BD93022B14CF6A0036323C /* Build configuration list for PBXNativeTarget "ibugramTests" */;
+			buildPhases = (
+				13BD92E72B14CF6A0036323C /* Sources */,
+				13BD92E82B14CF6A0036323C /* Frameworks */,
+				13BD92E92B14CF6A0036323C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				13BD92ED2B14CF6A0036323C /* PBXTargetDependency */,
+			);
+			name = ibugramTests;
+			productName = ibugramTests;
+			productReference = 13BD92EB2B14CF6A0036323C /* ibugramTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		13BD92F42B14CF6A0036323C /* ibugramUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13BD93052B14CF6A0036323C /* Build configuration list for PBXNativeTarget "ibugramUITests" */;
+			buildPhases = (
+				13BD92F12B14CF6A0036323C /* Sources */,
+				13BD92F22B14CF6A0036323C /* Frameworks */,
+				13BD92F32B14CF6A0036323C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				13BD92F72B14CF6A0036323C /* PBXTargetDependency */,
+			);
+			name = ibugramUITests;
+			productName = ibugramUITests;
+			productReference = 13BD92F52B14CF6A0036323C /* ibugramUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		13BD92D32B14CF690036323C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					13BD92DA2B14CF690036323C = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
+					13BD92EA2B14CF6A0036323C = {
+						CreatedOnToolsVersion = 15.0.1;
+						TestTargetID = 13BD92DA2B14CF690036323C;
+					};
+					13BD92F42B14CF6A0036323C = {
+						CreatedOnToolsVersion = 15.0.1;
+						TestTargetID = 13BD92DA2B14CF690036323C;
+					};
+				};
+			};
+			buildConfigurationList = 13BD92D62B14CF690036323C /* Build configuration list for PBXProject "ibugram" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 13BD92D22B14CF690036323C;
+			packageReferences = (
+				13BD930A2B150B210036323C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				13BD930B2B150E510036323C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
+			productRefGroup = 13BD92DC2B14CF690036323C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				13BD92DA2B14CF690036323C /* ibugram */,
+				13BD92EA2B14CF6A0036323C /* ibugramTests */,
+				13BD92F42B14CF6A0036323C /* ibugramUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		13BD92D92B14CF690036323C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13BD92E62B14CF6A0036323C /* Preview Assets.xcassets in Resources */,
+				13BD92E32B14CF6A0036323C /* Assets.xcassets in Resources */,
+				13BD93092B14D0410036323C /* GoogleService-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		13BD92E92B14CF6A0036323C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		13BD92F32B14CF6A0036323C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		13BD92D72B14CF690036323C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13BD93142B1516F10036323C /* AppDelegate.swift in Sources */,
+				13BD93292B151AE90036323C /* FeedScreen.swift in Sources */,
+				13BD93342B1525CA0036323C /* +View.swift in Sources */,
+				13BD931E2B15183A0036323C /* LoginScreen.swift in Sources */,
+				13BD932F2B151C7D0036323C /* SearchScreen.swift in Sources */,
+				13BD92DF2B14CF690036323C /* ibugramApp.swift in Sources */,
+				13BD93232B1518F20036323C /* ProfileScreen.swift in Sources */,
+				13BD93322B151C950036323C /* ChatScreen.swift in Sources */,
+				13BD932C2B151B320036323C /* TabBar.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		13BD92E72B14CF6A0036323C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13BD92F02B14CF6A0036323C /* ibugramTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		13BD92F12B14CF6A0036323C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13BD92FC2B14CF6A0036323C /* ibugramUITestsLaunchTests.swift in Sources */,
+				13BD92FA2B14CF6A0036323C /* ibugramUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		13BD92ED2B14CF6A0036323C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 13BD92DA2B14CF690036323C /* ibugram */;
+			targetProxy = 13BD92EC2B14CF6A0036323C /* PBXContainerItemProxy */;
+		};
+		13BD92F72B14CF6A0036323C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 13BD92DA2B14CF690036323C /* ibugram */;
+			targetProxy = 13BD92F62B14CF6A0036323C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		13BD92FD2B14CF6A0036323C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		13BD92FE2B14CF6A0036323C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		13BD93002B14CF6A0036323C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ibugram/Preview Content\"";
+				DEVELOPMENT_TEAM = 3NAJ65892F;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ibugram/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ba.ibu.ibugram;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		13BD93012B14CF6A0036323C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ibugram/Preview Content\"";
+				DEVELOPMENT_TEAM = 3NAJ65892F;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ibugram/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ba.ibu.ibugram;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		13BD93032B14CF6A0036323C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3NAJ65892F;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ba.ibu.ibugramTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ibugram.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ibugram";
+			};
+			name = Debug;
+		};
+		13BD93042B14CF6A0036323C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3NAJ65892F;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ba.ibu.ibugramTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ibugram.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ibugram";
+			};
+			name = Release;
+		};
+		13BD93062B14CF6A0036323C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3NAJ65892F;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ba.ibu.ibugramUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ibugram;
+			};
+			name = Debug;
+		};
+		13BD93072B14CF6A0036323C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3NAJ65892F;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ba.ibu.ibugramUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ibugram;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		13BD92D62B14CF690036323C /* Build configuration list for PBXProject "ibugram" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13BD92FD2B14CF6A0036323C /* Debug */,
+				13BD92FE2B14CF6A0036323C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		13BD92FF2B14CF6A0036323C /* Build configuration list for PBXNativeTarget "ibugram" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13BD93002B14CF6A0036323C /* Debug */,
+				13BD93012B14CF6A0036323C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		13BD93022B14CF6A0036323C /* Build configuration list for PBXNativeTarget "ibugramTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13BD93032B14CF6A0036323C /* Debug */,
+				13BD93042B14CF6A0036323C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		13BD93052B14CF6A0036323C /* Build configuration list for PBXNativeTarget "ibugramUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13BD93062B14CF6A0036323C /* Debug */,
+				13BD93072B14CF6A0036323C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		13BD930A2B150B210036323C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.18.0;
+			};
+		};
+		13BD930B2B150E510036323C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		13BD930C2B150F270036323C /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13BD930A2B150B210036323C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		13BD930F2B15145D0036323C /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13BD930B2B150E510036323C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		13BD93112B15145D0036323C /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13BD930B2B150E510036323C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 13BD92D32B14CF690036323C /* Project object */;
+}
