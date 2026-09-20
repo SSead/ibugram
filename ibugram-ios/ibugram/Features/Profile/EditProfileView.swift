@@ -60,14 +60,13 @@ struct EditProfileView: View {
     }
 
     private func avatarPicker(_ viewModel: EditProfileViewModel) -> some View {
-        PhotosPicker(selection: $pickedPhoto, matching: .images) {
-            OnboardingAvatarPreview(
-                imageData: viewModel.avatarImageData,
-                displayName: viewModel.trimmedDisplayName
-            )
-        }
-        .accessibilityLabel("Change profile photo")
-        .frame(maxWidth: .infinity)
+        let preview = OnboardingAvatarPreview(
+            imageData: viewModel.avatarImageData,
+            displayName: viewModel.trimmedDisplayName
+        )
+        return PhotosPicker(selection: $pickedPhoto, matching: .images) { preview }
+            .accessibilityLabel("Change profile photo")
+            .frame(maxWidth: .infinity)
     }
 
     private func bioEditor(_ viewModel: EditProfileViewModel) -> some View {

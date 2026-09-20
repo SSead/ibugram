@@ -4,34 +4,41 @@ This is the live status page. Newest update at the top.
 
 ---
 
-## 2026-09-20 · 08:10 — Phase 0 complete, Phase 1 dispatched
+## 2026-09-20 · 09:25 — Phase 2 in flight, one integration debt identified
 
-**Where things stand.** The repository is under git for the first time. The 2023
-prototype (12 Swift files, four placeholder screens, a Firebase login) is committed as
-the baseline so the delta is visible.
+**Shipped and committed** (3 signed commits, 310 files tracked):
 
-**Decisions made this phase** — full reasoning in `90-DECISION-LOG.md`:
-- Firebase is out. The backend is now a Vapor 4 service on PostgreSQL, with a shared
-  `IBUgramKit` Swift package used by both the server and the app.
-- Authentication is passwordless email OTP restricted to the two university domains.
-- iOS 18 minimum, Swift 6 strict concurrency.
+| Component | State |
+| --- | --- |
+| Database schema | 28 tables, 34 reversible migrations, trigger-maintained counters |
+| Auth | Full OTP lifecycle verified by curl: domain rejection, throttling, refresh rotation, reuse detection kills the token family |
+| Media | Upload with EXIF stripping, re-encode, thumbnails |
+| `IBUgramKit` | Shared DTO package, 42 tests |
+| Server | 52 tests, zero warnings |
+| iOS foundation | Firebase removed, synchronized file groups, design system, 19 unit + 4 UI tests, 6 screenshots |
+| iOS feed / posts / composer | Feed, post card, comment threads, likes, multi-image composer. 39 tests |
 
-**Scope locked** in `00-PRODUCT-SPEC.md`. The Instagram-equivalent core (feed, posts,
-profiles, follow graph, search, direct messaging, notifications) plus five standout
-capabilities chosen to be defensible in front of a committee:
+**Running now:** three backend teams (posts and social graph, Spaces and Events,
+messaging and realtime) and one iOS team (profile, search, activity).
 
-1. **Spaces** — clubs, departments and courses as real communities
-2. **Campus Events** — RSVP, MapKit campus map, EventKit calendar integration
-3. **On-device intelligence** — Vision alt-text and Natural Language topic extraction,
-   no image ever leaves the phone
-4. **Offline-first** — SwiftData cache with a replayable outbox
-5. **System integration** — WidgetKit widget and App Intents for Siri
+### Integration debt — DTO fragmentation
 
-**Team dispatched this phase**
-| Agent | Model | Assignment |
-| --- | --- | --- |
-| Backend Architect | Opus | `IBUgramKit` DTOs, Vapor skeleton, full database schema and migrations |
-| iOS Platform Architect | Opus | Xcode project modernization, Firebase removal, design system |
+Four iOS teams each needed the same model types before the real `IBUgramKit` existed,
+so they independently defined them in their own feature folders: `Post` landed in
+`Features/Profile/ProfileDTOs.swift`, `Comment`, `Event` and `Place` in
+`Features/Activity/ActivityDTOs.swift`, `SpaceSummary` in
+`Features/Search/SearchDTOs.swift`, and the platform architect's `IBUgramKitStubs.swift`
+holds a further fifteen.
 
-**Next.** Once the foundation compiles on both sides, feature teams fan out in
-parallel against the frozen API contract in `01-API-CONTRACT.md`.
+This was a predictable cost of starting the client before the contract package compiled,
+and it is already causing a visible defect: the post card cannot render its Space, Event
+or location chips because the `Post` type it sees — the one Profile defined — lacks those
+fields.
+
+`IBUgramKit` now exists with the complete, contract-accurate DTOs. A single integration
+task will delete every local duplicate and switch the app to the package, which is why
+no agent was allowed to edit the package or the stubs file: the duplicates are
+concentrated in known places rather than scattered.
+
+**Next:** integration pass on the client, then the standout features (on-device
+intelligence, offline outbox, map, widget), then QA, seeded demo data and the report.

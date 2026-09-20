@@ -3,6 +3,7 @@ import Testing
 @testable import ibugram
 
 @Suite("Search debounce and scopes")
+@MainActor
 struct SearchViewModelTests {
     private func isolatedRecents() -> RecentSearchStore {
         let suite = "ibugram.tests.recents.\(UUID().uuidString)"

@@ -3,6 +3,7 @@ import Testing
 @testable import ibugram
 
 @Suite("Profile follow state")
+@MainActor
 struct ProfileViewModelTests {
     @Test("follow is applied immediately and kept when the request succeeds")
     func followSucceedsOptimistically() async {
@@ -81,6 +82,7 @@ struct ProfileViewModelTests {
 }
 
 @Suite("Follow list follow buttons")
+@MainActor
 struct FollowListViewModelTests {
     @Test("inline follow rolls back when the request fails")
     func inlineFollowRollsBack() async {

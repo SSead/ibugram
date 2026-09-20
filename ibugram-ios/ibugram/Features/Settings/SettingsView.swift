@@ -3,7 +3,6 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.theme) private var theme
     @Environment(AuthSessionStore.self) private var session
-    @Environment(Router.self) private var router
     @State private var appearance = AppearanceSettingsStore()
     @State private var appLock = AppLockSettingsStore()
     @State private var isEditingProfile = false

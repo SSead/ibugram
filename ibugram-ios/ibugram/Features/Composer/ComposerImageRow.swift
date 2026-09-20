@@ -59,7 +59,7 @@ struct ComposerImageRow: View {
     private var altTextBinding: Binding<String> {
         Binding(
             get: { image.altText },
-            set: onAltTextChange
+            set: { newValue in onAltTextChange(newValue) }
         )
     }
 

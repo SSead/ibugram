@@ -46,6 +46,7 @@ struct ActivityGroupingTests {
 }
 
 @Suite("Unread activity count")
+@MainActor
 struct ActivityViewModelUnreadTests {
     @Test("the badge uses the unread-count endpoint and drops after items are marked read")
     func unreadCountThenMarkRead() async {
