@@ -19,6 +19,8 @@ Packages/
 # Vapor
 ibugram-server/.env
 ibugram-server/Public/uploads/
+ibugram-server/.media*/
+ibugram-server/.media-social/
 
 # Secrets
 *.env
