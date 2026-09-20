@@ -4,6 +4,7 @@ import IBUgramKit
 struct AppShellView: View {
     @Environment(\.theme) private var theme
     @Environment(\.appContainer) private var container
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(AuthSessionStore.self) private var session
     @State private var selection: AppTab = .feed
     @State private var lastContentTab: AppTab = .feed
@@ -50,10 +51,19 @@ struct AppShellView: View {
         }
         .overlay { AppLockOverlay() }
         .task {
-            if LaunchConfiguration.current.openComposer {
-                isPresentingComposer = true
-            }
+            presentComposerIfRequested()
             await listenForRealtime()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                presentComposerIfRequested()
+            }
+        }
+    }
+
+    private func presentComposerIfRequested() {
+        if LaunchConfiguration.current.openComposer || ComposerLaunchFlag.consume() {
+            isPresentingComposer = true
         }
     }
 

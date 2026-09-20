@@ -34,10 +34,12 @@ enum FeedKind: String, CaseIterable, Identifiable, Sendable {
 final class FeedViewModel: ErrorPresenting {
     var selectedKind: FeedKind = .following
     var presentedError: PresentedError?
+    var isShowingCachedContent = false
 
     private let followingFeed: PagedList<Post>
     private let discoverFeed: PagedList<Post>
     private let api: any APIRequesting
+    private let cache: any OfflineCaching
     private let happeningNowOverride: (@Sendable () -> [Event])?
     private var happeningNowItems: [Event] = []
     private var engagement: [UUID: PostEngagement] = [:]
@@ -46,9 +48,11 @@ final class FeedViewModel: ErrorPresenting {
 
     init(
         api: any APIRequesting,
+        cache: any OfflineCaching = NullOfflineCache(),
         happeningNow: (@Sendable () -> [Event])? = nil
     ) {
         self.api = api
+        self.cache = cache
         self.happeningNowOverride = happeningNow
         self.followingFeed = PagedList { cursor in
             try await api.send(FeedEndpoint.following(cursor: cursor))
@@ -73,14 +77,20 @@ final class FeedViewModel: ErrorPresenting {
     }
 
     func load() async {
-        await feed.loadFirstPageIfNeeded()
+        if feed.phase == .idle {
+            await showCachedFeedIfAvailable()
+            await feed.reload()
+            await persistFeedIfLoaded()
+        }
         await refreshHappeningNowIfNeeded()
     }
 
     func reload() async {
         await feed.reload()
+        await persistFeedIfLoaded()
         await refreshHappeningNow()
         if case .failed(let error) = feed.phase, !feed.items.isEmpty {
+            isShowingCachedContent = true
             present(error) { [weak self] in await self?.reload() }
         }
     }
@@ -151,12 +161,40 @@ final class FeedViewModel: ErrorPresenting {
 
     private func refreshHappeningNowIfNeeded() async {
         guard happeningNowOverride == nil, happeningNowItems.isEmpty else { return }
+        if let cached = await cache.value([Event].self, forKey: OfflineCacheKey.happeningNow) {
+            happeningNowItems = cached
+        }
         await refreshHappeningNow()
     }
 
     private func refreshHappeningNow() async {
         guard happeningNowOverride == nil else { return }
-        happeningNowItems = (try? await api.send(EventEndpoints.HappeningNow()))?.items ?? happeningNowItems
+        do {
+            let events = try await api.send(EventEndpoints.HappeningNow()).items
+            happeningNowItems = events
+            await cache.store(events, forKey: OfflineCacheKey.happeningNow)
+        } catch {
+            if happeningNowItems.isEmpty {
+                happeningNowItems = await cache.value([Event].self, forKey: OfflineCacheKey.happeningNow) ?? []
+            }
+        }
+    }
+
+    private func showCachedFeedIfAvailable() async {
+        guard feed.items.isEmpty else { return }
+        let cached = await cache.value(Paginated<Post>.self, forKey: OfflineCacheKey.feed(selectedKind.rawValue))
+        guard let cached, !cached.items.isEmpty else { return }
+        feed.replaceWithCached(cached.items)
+        isShowingCachedContent = true
+    }
+
+    private func persistFeedIfLoaded() async {
+        guard feed.phase == .loaded else { return }
+        isShowingCachedContent = false
+        await cache.store(
+            Paginated(items: feed.items, nextCursor: nil),
+            forKey: OfflineCacheKey.feed(selectedKind.rawValue)
+        )
     }
 
     private func resolved(_ post: Post) -> Post {

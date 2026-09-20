@@ -1,7 +1,14 @@
 import Foundation
+import IBUgramKit
 
-/// The read-through cache seam. The Offline-first team replaces the implementation with
-/// SwiftData-backed storage plus the outbox; the protocol is what callers depend on.
+enum OfflineCacheKey {
+    static let happeningNow = "events.happening-now"
+
+    static func feed(_ kind: String) -> String {
+        "feed.\(kind)"
+    }
+}
+
 protocol OfflineCaching: Sendable {
     func value<T: Decodable & Sendable>(_ type: T.Type, forKey key: String) async -> T?
     func store<T: Encodable & Sendable>(_ value: T, forKey key: String) async
@@ -42,6 +49,29 @@ actor FileSystemOfflineCache: OfflineCaching {
     private func fileURL(forKey key: String) -> URL {
         let safeKey = key.replacingOccurrences(of: "/", with: "_")
         return directory.appending(path: "\(safeKey).json", directoryHint: .notDirectory)
+    }
+}
+
+actor InMemoryOfflineCache: OfflineCaching {
+    private var storage: [String: Data] = [:]
+    private let decoder = JSONDecoder.ibugram
+    private let encoder = JSONEncoder.ibugram
+
+    func value<T: Decodable & Sendable>(_ type: T.Type, forKey key: String) async -> T? {
+        guard let data = storage[key] else { return nil }
+        return try? decoder.decode(type, from: data)
+    }
+
+    func store<T: Encodable & Sendable>(_ value: T, forKey key: String) async {
+        storage[key] = try? encoder.encode(value)
+    }
+
+    func removeValue(forKey key: String) async {
+        storage[key] = nil
+    }
+
+    func removeAll() async {
+        storage.removeAll()
     }
 }
 

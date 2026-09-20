@@ -113,6 +113,41 @@ struct FeedViewModelLikeTests {
     }
 }
 
+@Suite("Feed offline cache")
+@MainActor
+struct FeedViewModelOfflineCacheTests {
+    @Test("a failed first load shows the last cached posts")
+    func failedLoadFallsBackToCache() async {
+        let cache = InMemoryOfflineCache()
+        await cache.store(
+            Paginated(items: [FeedFixtures.singleImage], nextCursor: nil),
+            forKey: OfflineCacheKey.feed(FeedKind.following.rawValue)
+        )
+        let api = FeedScriptedAPIClient(pages: [:], mutationError: .offline)
+        let viewModel = FeedViewModel(api: api, cache: cache, happeningNow: { [] })
+
+        await viewModel.load()
+
+        #expect(viewModel.displayPosts.map(\.id) == [FeedFixtures.singleImage.id])
+        #expect(viewModel.isShowingCachedContent)
+    }
+}
+
+@Suite("Campus happenings intent")
+struct CampusHappeningsSummaryTests {
+    @Test("an empty list tells Siri that nothing is on")
+    func emptyDialog() {
+        #expect(CampusHappeningsSummary.dialog(for: []) == "Nothing is happening on campus right now.")
+    }
+
+    @Test("titles and places are spoken in order")
+    func titledPlaces() {
+        let text = CampusHappeningsSummary.dialog(for: [FeedFixtures.careerFair, FeedFixtures.openDay])
+        #expect(text.contains("Career Fair"))
+        #expect(text.contains(FeedFixtures.careerFair.place?.name ?? "missing"))
+    }
+}
+
 actor FeedScriptedAPIClient: APIRequesting {
     private let pages: [String?: Paginated<Post>]
     private let happeningNow: [Event]

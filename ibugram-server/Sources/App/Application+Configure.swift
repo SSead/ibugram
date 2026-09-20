@@ -27,6 +27,7 @@ func configure(_ app: Application, using configuration: AppConfiguration) async 
     registerMigrations(app)
 
     try registerRoutes(app)
+    app.asyncCommands.use(SeedCommand(), as: "seed")
 }
 
 private func configureDatabase(_ app: Application, with configuration: AppConfiguration) throws {

@@ -43,6 +43,13 @@ final class PagedList<Item: Decodable & Sendable & Identifiable> {
         }
     }
 
+    func replaceWithCached(_ cached: [Item]) {
+        items = cached
+        nextCursor = nil
+        hasReachedEnd = true
+        phase = .loaded
+    }
+
     func loadNextPage() async {
         guard !isLoadingMore, !hasReachedEnd, let cursor = nextCursor else { return }
         isLoadingMore = true

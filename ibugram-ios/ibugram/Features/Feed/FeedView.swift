@@ -19,7 +19,7 @@ struct FeedView: View {
         }
         .background(theme.colors.background)
         .task {
-            let model = viewModel ?? FeedViewModel(api: container.api)
+            let model = viewModel ?? FeedViewModel(api: container.api, cache: container.cache)
             viewModel = model
             await model.load()
         }
@@ -41,6 +41,9 @@ struct FeedView: View {
         let bound = Bindable(viewModel)
         return VStack(spacing: 0) {
             picker(viewModel)
+            if viewModel.isShowingCachedContent {
+                OfflineBanner()
+            }
             RefreshableScrollView(refresh: { await viewModel.reload() }) {
                 HappeningNowRail(
                     events: viewModel.happeningNowEvents(),

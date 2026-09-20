@@ -376,7 +376,7 @@ The product specification locks the in-scope feature set and is equally explicit
 
 Those exclusions are product decisions, not unfinished work. A Stories surface would require a different media pipeline, a different retention model and a different notification load. Video would require transcoding the project does not own. Advertising would invert the membership rule. Public access would destroy the closed-community claim.
 
-The specification also names four P1 "standout" areas that distinguish the product from a generic clone: Spaces, Campus Events, on-device intelligence, and offline-first behaviour, plus system extensions (WidgetKit and App Intents). Chapter 4 reports what was implemented in the repository against that list. WidgetKit and App Intents are specified and are not present as source files; they are called out as future work rather than as delivered features.
+The specification also names four P1 "standout" areas that distinguish the product from a generic clone: Spaces, Campus Events, on-device intelligence, and offline-first behaviour, plus system extensions (WidgetKit and App Intents). Chapter 4 reports what was implemented in the repository against that list. App Intents ship in the main application target ("What's happening at Burch?", "Post to IBUgram"). A WidgetKit extension was not added: it would have required a new native target and `project.pbxproj` surgery on a synchronized-file-group project, which was deferred rather than risked.
 
 2.2 ## **Actors and capabilities** {#actors-and-capabilities}
 
@@ -426,7 +426,7 @@ The following requirements are numbered so they can be traced to features, tests
 | FR-15 | P1 | Events: title, start/end, place, capacity, RSVP going / interested / none, happening-now rail, campus map, Add to Calendar via EventKit. |
 | FR-16 | P1 | On-device Vision alt-text and scene labels at compose time; Natural Language hashtag, language and sentiment signals. No image leaves the device for analysis. |
 | FR-17 | P1 | Readable offline cache; outbox for posts, likes, comments and messages created offline, replayed on reconnect. Network-state banner. |
-| FR-18 | P1 | WidgetKit home-screen widget and App Intents ("Post to IBUgram", "What's happening at Burch?") — specified; not present as source in this repository (see §6.6). |
+| FR-18 | P1 | App Intents in the main target: "Post to IBUgram" and "What's happening at Burch?". WidgetKit home-screen widget specified; not added as an extension target (see §6.6). |
 | FR-19 | P1 | VoiceOver labels, Dynamic Type through XXL, Reduce Motion, contrast-checked palette, complete dark mode, haptics. |
 | FR-20 | P2 | Report post/comment/user; moderator queue; hide and suspend; audit fields on the report row. |
 
@@ -487,7 +487,7 @@ Source: product specification §6.
 | 4 | Every P0 and P1 feature is reachable from the UI. |
 | 5 | `Senior Design Project.md` is complete with diagrams and screenshots. |
 
-Criterion 5 is this document. Criteria 1–2 are reproduced by the commands in Appendix C and D; pass/fail output is not fabricated here. Criterion 3 is evidenced by the populated screenshots in `docs/screenshots/` (the `1x-*` series). Criterion 4 is true of the P0 surface and of Spaces, Events, map, messaging, Vision/Natural Language services and the offline cache protocol; it is not true of WidgetKit and App Intents, which remain specified but unimplemented.
+Criterion 5 is this document. Criteria 1–2 are reproduced by the commands in Appendix C and D; pass/fail output is not fabricated here. Criterion 3 is evidenced by the populated screenshots in `docs/screenshots/` (the `1x-*` series) and by `swift run App seed` against `ibugram_dev` (12 users, 15 posts, 4 spaces, 3 events; primary login `amina.hodzic@stu.ibu.edu.ba`). Criterion 4 is true of the P0 surface and of Spaces, Events, map, messaging, Vision/Natural Language services, the file-backed offline feed cache, and App Intents; it is not true of a WidgetKit extension target.
 
 2.8 ## **Comparison against Firebase (decision D-001)** {#comparison-against-firebase-decision-d-001}
 
@@ -1452,7 +1452,7 @@ Department boost is 1.3 when author and viewer share a department, else 1.0. Tie
 
 **Rate limiting.** Auth routes have a dedicated limiter. OTP throttling is a second, tighter limit keyed on email.
 
-**Known gaps**, recorded so Chapter 6 does not have to pretend they are closed: APNs is not delivered; TLS is a deployment concern (development is plaintext localhost); the development `debug_code` must not ship; `conversation_participants.unread_count` is application-maintained rather than trigger-maintained; WidgetKit/App Intents are unspecified from a privacy standpoint because they are unimplemented.
+**Known gaps**, recorded so Chapter 6 does not have to pretend they are closed: APNs is not delivered; TLS is a deployment concern (development is plaintext localhost); the development `debug_code` must not ship; `conversation_participants.unread_count` is application-maintained rather than trigger-maintained; a WidgetKit extension target is unimplemented (App Intents are in the main target).
 
 *Table 3.3 Foreign-key delete behaviour (summary)*
 
@@ -1501,7 +1501,8 @@ Counters live in PostgreSQL triggers, not in Swift, because cascades and `psql` 
 | MapKit | Campus map | Pins from `GET /events/map?bbox=`. |
 | EventKit | Add to Calendar | Write-only access; used on the event detail screen. |
 | LocalAuthentication | Optional app lock | Settings toggle; `Info.plist` usage string for Face ID. |
-| WidgetKit / App Intents | Specified P1 extensions | Not present as source files in this repository. |
+| App Intents | "What's happening at Burch?", "Post to IBUgram" | Main app target; `AppIntents.framework`. |
+| WidgetKit | Home-screen widget | Not present. Deferred: new extension target would require `pbxproj` surgery. |
 | SwiftData | Specified cache/outbox | Callers use `OfflineCaching`; shipped implementation is JSON-on-disk. |
 
 The author's prior stack was Android and React Native. The justification for SwiftUI over a cross-platform client is the personal objective in §1.2: this project is the native iOS education. The justification for Vapor over a Node or Go API is D-001: the shared kit only pays for itself if both sides compile Swift.
@@ -2025,7 +2026,7 @@ Operational administration of the server is environment variables (Appendix D), 
 6.6 ## **Future work** {#future-work}
 
 - **APNs.** Protocol seam exists; delivery needs a paid Apple Developer account and a push service implementation.
-- **WidgetKit and App Intents.** Specified in FR-18; no extension target or `AppIntent` types in the tree. The intended surfaces are "next campus event and unread activity count" and Siri/Spotlight "Post to IBUgram" / "What's happening at Burch?".
+- **WidgetKit.** Specified as a home-screen widget; no extension target. App Intents *are* in the main target: Siri/Shortcuts "Post to IBUgram" and "What's happening at Burch?" (cached happening-now when offline).
 - **SwiftData outbox.** Replace `FileSystemOfflineCache` and the in-memory message outbox with a durable queue for posts, likes, comments and messages, including conflict resolution.
 - **Video.** Explicitly out of scope for v1.0; would require transcoding and a different `MediaStore`.
 - **Web client.** Would reuse `IBUgramKit` only if compiled for the web, which it is not; more realistically a TypeScript client generated from the same contract document.
@@ -2040,7 +2041,7 @@ IBUgram is a closed campus network with a native iOS client and an owned Swift s
 
 What the author learned moving from Android and React Native to native iOS is not a list of APIs. It is a different concurrency model (actors, `async`/`await`, Swift 6 data-race checking), a different UI model (declarative SwiftUI with a design system instead of scattered literals), and a different persistence story (Keychain, a cache protocol, EventKit and Vision as peer frameworks). What the author learned writing Vapor is that the same language on the server is only an advantage if the contract is a package, not a wiki page. Fluent migrations, trigger-maintained counters and `SELECT … FOR UPDATE` are the parts of PostgreSQL that a document store would have left as application folklore.
 
-Limitations faced honestly: a single developer; no paid Apple account, so no APNs, no TestFlight, no App Store delivery; WidgetKit and App Intents specified and not built; SwiftData outbox specified and not built; onboarding and OTP screens captured in light only; NFR-1 and NFR-2 not measured in this repository; XCUITest coverage of post/like/follow/message thinner than the outline's wish list; parallel iOS work produced DTO duplicates that had to be deleted. The 2023 Firebase prototype was the right first sketch and the wrong foundation.
+Limitations faced honestly: a single developer; no paid Apple account, so no APNs, no TestFlight, no App Store delivery; WidgetKit extension specified and not built (App Intents were delivered in the main target instead); SwiftData outbox specified and not built (file-backed feed cache is); onboarding and OTP screens captured in light only; NFR-1 and NFR-2 not measured in this repository; XCUITest coverage of post/like/follow/message thinner than the outline's wish list; parallel iOS work produced DTO duplicates that had to be deleted. The 2023 Firebase prototype was the right first sketch and the wrong foundation.
 
 Recommendations. For a successor student: keep the kit, keep the ER model, keep OTP. Spend the next increment on a durable outbox, APNs once an account exists, and a VoiceOver pass recorded as a video for the defence. For the university, if the app is ever hosted: TLS, a real `EmailSender`, `pg_dump` in cron, and a moderator who is not the author.
 
@@ -2331,8 +2332,10 @@ cd /Users/sead/Dev/sdp/ibugram-server
 cp .env.example .env
 # defaults: DATABASE_USERNAME=sead, DATABASE_NAME=ibugram_dev, JWT_SECRET development placeholder
 swift run App migrate
-swift run App serve
+swift run App seed
+swift run App serve --hostname 127.0.0.1 --port 8080
 # GET http://127.0.0.1:8080/health
+# Primary demo: amina.hodzic@stu.ibu.edu.ba — request OTP, read debug_code from the server log.
 ```
 
 **Shared package tests**
@@ -2366,3 +2369,5 @@ xcrun simctl launch <udid> ba.ibu.ibugram \
 `-ibugram-auth-state` accepts `signed-out`, `onboarding`, `signed-in`. Bundle identifier: `ba.ibu.ibugram`.
 
 **Configuration keys** (from `.env.example`): `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_NAME`, `JWT_SECRET`, `ACCESS_TOKEN_LIFETIME` (900), `REFRESH_TOKEN_LIFETIME` (5184000), `MEDIA_DIRECTORY`, `PUBLIC_BASE_URL`, `MAX_UPLOAD_BYTES` (10485760), `THUMBNAIL_MAX_PIXELS` (400), `JPEG_QUALITY` (0.82), `APP_VERSION`.
+
+The operational runbook with seed counts and Siri intent names is `docs/30-RUNBOOK.md`.
