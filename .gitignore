@@ -1,0 +1,33 @@
+.DS_Store
+
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+
+# Vapor
+ibugram-server/.env
+ibugram-server/Public/uploads/
+
+# Secrets
+*.env
+!.env.example
+
+# Archived standalone history for ibugram-ios (also at github.com/SSead/ibugram-ios)
+.legacy/
+
+# Logs & tooling
+*.log
+.venv/
+node_modules/
