@@ -1,31 +1,19 @@
-//
-//  ibugramUITestsLaunchTests.swift
-//  ibugramUITests
-//
-//  Created by Sead Smailagic on 27. 11. 2023..
-//
-
 import XCTest
 
-final class ibugramUITestsLaunchTests: XCTestCase {
-
-    override class var runsForEachTargetApplicationUIConfiguration: Bool {
-        true
-    }
+@MainActor
+final class LaunchTests: XCTestCase {
+    override class var runsForEachTargetApplicationUIConfiguration: Bool { false }
 
     override func setUpWithError() throws {
         continueAfterFailure = false
     }
 
-    func testLaunch() throws {
+    func testLaunchProducesAScreenshot() {
         let app = XCUIApplication()
         app.launch()
 
-        // Insert steps here to perform after app launch but before taking a screenshot,
-        // such as logging into a test account or navigating somewhere in the app
-
         let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "Launch Screen"
+        attachment.name = "Launch"
         attachment.lifetime = .keepAlways
         add(attachment)
     }

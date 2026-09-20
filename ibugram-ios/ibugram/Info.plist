@@ -2,16 +2,26 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.866108403683-dvcce00n4ke8r127um2rvpqugto85kqp</string>
-			</array>
-		</dict>
-	</array>
+	<key>CFBundleDisplayName</key>
+	<string>IBUgram</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>IBUgram adds campus events you are attending to your calendar.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>IBUgram uses the camera so you can take a photo for a post or your profile.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>IBUgram uses Face ID to unlock the app when app lock is enabled.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>IBUgram uses your location to tag posts with a campus place and to centre the campus map.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>IBUgram needs access to your photos so you can share them with the Burch community.</string>
+	<key>UIUserInterfaceStyle</key>
+	<string>Automatic</string>
 </dict>
 </plist>
