@@ -255,7 +255,8 @@ The original contract fixed error *codes* but not statuses. Clients must branch 
 | Code | Status |
 | --- | --- |
 | `validation_failed` | 422 |
-| `otp_invalid`, `otp_expired` | 400 |
+| `otp_invalid` | 400 |
+| `otp_expired` | 410 |
 | `unauthorized` | 401 |
 | `forbidden`, `domain_not_allowed` | 403 |
 | `not_found` | 404 |

@@ -1,0 +1,52 @@
+erDiagram
+    USERS |o--o{ SPACES : creates
+    USERS ||--o{ SPACE_MEMBERSHIPS : joins
+    USERS ||--o{ EVENTS : hosts
+    USERS ||--o{ EVENT_RSVPS : rsvps
+    SPACES ||--o{ SPACE_MEMBERSHIPS : has
+    SPACES |o--o{ POSTS : contains
+    SPACES |o--o{ EVENTS : hosts
+    SPACES }o--o| MEDIA : avatar
+    SPACES }o--o| MEDIA : banner
+    PLACES |o--o{ EVENTS : hosts
+    PLACES |o--o{ POSTS : locates
+    EVENTS |o--o{ POSTS : "posted about"
+    EVENTS ||--o{ EVENT_RSVPS : collects
+
+    USERS {
+        uuid id PK
+    }
+    MEDIA {
+        uuid id PK
+    }
+    POSTS {
+        uuid id PK
+        uuid space_id FK
+        uuid event_id FK
+        uuid place_id FK
+    }
+    SPACES {
+        uuid id PK
+        uuid avatar_media_id FK
+        uuid banner_media_id FK
+        uuid created_by_id FK
+    }
+    SPACE_MEMBERSHIPS {
+        uuid id PK
+        uuid space_id FK
+        uuid user_id FK
+    }
+    PLACES {
+        uuid id PK
+    }
+    EVENTS {
+        uuid id PK
+        uuid place_id FK
+        uuid host_id FK
+        uuid space_id FK
+    }
+    EVENT_RSVPS {
+        uuid id PK
+        uuid event_id FK
+        uuid user_id FK
+    }

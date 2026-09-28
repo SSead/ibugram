@@ -17,16 +17,10 @@ flowchart TB
         UC12[Publish campus Event]
     end
 
-    subgraph ModUC [Moderator]
-        UC13[Review report queue]
-        UC14[Hide content / suspend account]
-    end
-
     subgraph SysUC [System]
         UC15[Deliver OTP]
         UC16[Fan out notifications]
         UC17[Rank Discover feed]
-        UC18[Event reminders]
     end
 
     FacultyUC --> StudentUC

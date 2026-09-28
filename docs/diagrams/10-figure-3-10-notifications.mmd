@@ -1,0 +1,37 @@
+erDiagram
+    USERS ||--o{ NOTIFICATIONS : receives
+    USERS ||--o{ NOTIFICATION_ACTORS : "acts in"
+    NOTIFICATIONS ||--o{ NOTIFICATION_ACTORS : "grouped from"
+    NOTIFICATIONS }o--o| POSTS : about
+    NOTIFICATIONS }o--o| COMMENTS : about
+    NOTIFICATIONS }o--o| SPACES : about
+    NOTIFICATIONS }o--o| EVENTS : about
+
+    USERS {
+        uuid id PK
+    }
+    POSTS {
+        uuid id PK
+    }
+    COMMENTS {
+        uuid id PK
+    }
+    SPACES {
+        uuid id PK
+    }
+    EVENTS {
+        uuid id PK
+    }
+    NOTIFICATIONS {
+        uuid id PK
+        uuid recipient_id FK
+        uuid post_id FK
+        uuid comment_id FK
+        uuid space_id FK
+        uuid event_id FK
+    }
+    NOTIFICATION_ACTORS {
+        uuid id PK
+        uuid notification_id FK
+        uuid user_id FK
+    }

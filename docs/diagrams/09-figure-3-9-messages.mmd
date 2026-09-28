@@ -1,0 +1,48 @@
+erDiagram
+    USERS |o--o{ CONVERSATIONS : creates
+    USERS ||--o{ CONVERSATION_PARTICIPANTS : "takes part in"
+    USERS ||--o{ MESSAGES : sends
+    USERS ||--o{ MESSAGE_READS : reads
+    CONVERSATIONS ||--o{ CONVERSATION_PARTICIPANTS : includes
+    CONVERSATIONS ||--o{ MESSAGES : carries
+    CONVERSATIONS }o--o| MESSAGES : "last message"
+    CONVERSATIONS }o--o| MEDIA : avatar
+    CONVERSATION_PARTICIPANTS }o--o| MESSAGES : "last read"
+    MESSAGES ||--o{ MESSAGE_MEDIA : attaches
+    MEDIA ||--o{ MESSAGE_MEDIA : "attached to"
+    MESSAGES ||--o{ MESSAGE_READS : "read by"
+
+    USERS {
+        uuid id PK
+    }
+    MEDIA {
+        uuid id PK
+    }
+    CONVERSATIONS {
+        uuid id PK
+        uuid avatar_media_id FK
+        uuid created_by_id FK
+        uuid last_message_id FK
+    }
+    CONVERSATION_PARTICIPANTS {
+        uuid id PK
+        uuid conversation_id FK
+        uuid user_id FK
+        uuid last_read_message_id FK
+    }
+    MESSAGES {
+        uuid id PK
+        uuid conversation_id FK
+        uuid sender_id FK
+        uuid client_id
+    }
+    MESSAGE_MEDIA {
+        uuid id PK
+        uuid message_id FK
+        uuid media_id FK
+    }
+    MESSAGE_READS {
+        uuid id PK
+        uuid message_id FK
+        uuid user_id FK
+    }

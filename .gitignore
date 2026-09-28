@@ -33,3 +33,6 @@ ibugram-server/.media-social/
 *.log
 .venv/
 node_modules/
+
+# Thesis documents kept locally
+/thesis/

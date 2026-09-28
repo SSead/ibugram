@@ -1,0 +1,37 @@
+erDiagram
+    USERS ||--o{ AUTH_SESSIONS : "auth_sessions.user_id → users.id"
+    USERS }o--o| MEDIA : "users.avatar_media_id → media.id"
+    USERS ||--o{ MEDIA : "media.uploaded_by_id → users.id"
+    USERS ||--o{ FOLLOWS : "follows.follower_id → users.id"
+    USERS ||--o{ FOLLOWS : "follows.followee_id → users.id"
+    USERS ||--o{ BLOCKS : "blocks.blocker_id → users.id"
+    USERS ||--o{ BLOCKS : "blocks.blocked_id → users.id"
+    AUTH_SESSIONS |o--o| AUTH_SESSIONS : "auth_sessions.replaced_by_id → auth_sessions.id"
+
+    OTP_CHALLENGES {
+        uuid id PK
+    }
+    USERS {
+        uuid id PK
+        uuid avatar_media_id FK
+    }
+    AUTH_SESSIONS {
+        uuid id PK
+        uuid user_id FK
+        uuid family_id
+        uuid replaced_by_id FK
+    }
+    MEDIA {
+        uuid id PK
+        uuid uploaded_by_id FK
+    }
+    FOLLOWS {
+        uuid id PK
+        uuid follower_id FK
+        uuid followee_id FK
+    }
+    BLOCKS {
+        uuid id PK
+        uuid blocker_id FK
+        uuid blocked_id FK
+    }

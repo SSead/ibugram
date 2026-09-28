@@ -28,19 +28,13 @@ Explicitly out of scope for v1.0: Stories, Reels, video posts, advertising, publ
 | Media | Server-side storage with on-disk blob store behind a `MediaStore` protocol |
 | Local persistence | SwiftData cache + offline outbox |
 
-Firebase has been removed. Rationale: the SDP requires an entity-relationship model and
-demonstrable unit/integration/system testing, both of which a relational, self-owned
-backend supports directly; and owning the full stack in one language is the defensible
-engineering story for this project.
-
 ## 3. Actors
 
 | Actor | Source | Capabilities |
 | --- | --- | --- |
 | Student | `@stu.ibu.edu.ba` | Full social participation; join Spaces; RSVP to Events |
 | Faculty / Staff | `@ibu.edu.ba` | Everything a Student can do, plus create **official** Spaces and publish Events to the whole campus. Carries a verified badge. |
-| Moderator | Flag on account | Review reports, hide content, suspend accounts |
-| System | — | OTP delivery, notification fan-out, feed ranking, event reminders |
+| System | — | OTP delivery, notification fan-out, Discover feed ranking |
 
 ## 4. Feature set
 
@@ -59,11 +53,11 @@ engineering story for this project.
 - Double-tap to like with animation; optimistic like state.
 
 ### 4.3 Posts (P0)
-- Composer: pick up to 10 images, crop, caption, hashtags, mentions, optional Space,
-  optional campus location, optional attached Event.
-- Edit caption, delete post, disable comments, archive.
+- Composer: pick up to 10 photos, caption, optional Space, optional campus place,
+  comments on/off.
+- Delete a published post; comments can be disabled at compose time.
 - Comments with one level of replies, comment likes.
-- Saves/bookmarks with collections.
+- Save and unsave a post as a bookmark.
 
 ### 4.4 Profiles and social graph (P0)
 - Avatar, display name, username, bio, department, role badge, counts.
@@ -81,7 +75,8 @@ engineering story for this project.
 - Message requests from non-followed users.
 
 ### 4.7 Notifications (P0)
-- Activity feed: likes, comments, replies, follows, mentions, Space invites, Event reminders.
+- Activity feed: likes, comments, replies, follows, mentions, Space invites, and other
+  notification kinds stored for the user.
 - Delivered live over the WebSocket while connected; fetched on cold start.
 - Grouped ("X and 4 others liked your post"), read/unread state.
 
@@ -101,11 +96,10 @@ Clubs, departments and courses as first-class communities.
 - "Happening now" rail at the top of the feed.
 
 ### 4.10 On-device intelligence — standout (P1)
-All inference runs on the device. No image ever leaves the phone for analysis.
+All image analysis for captions runs on the device. No image ever leaves the phone for analysis.
 - **Vision**: automatic alt-text generation and scene classification at compose time,
   surfaced as an editable suggestion; powers accessibility labels on every image.
-- **Natural Language**: hashtag and topic suggestion from the caption; language
-  identification; sentiment used as a soft ranking signal.
+- Discover ranking uses post age, likes, comments and a same-department boost.
 - Rationale to defend: privacy-preserving, zero marginal server cost, works offline.
 
 ### 4.11 Offline-first — standout (P1)
@@ -124,7 +118,7 @@ All inference runs on the device. No image ever leaves the phone for analysis.
   contrast-checked palette, complete dark mode, haptics.
 
 ### 4.14 Moderation and safety (P2)
-- Report post/comment/user; moderator queue; hide and suspend actions; audit log.
+- Report post, comment or user; the report row records reason and status.
 
 ## 5. Non-functional requirements
 

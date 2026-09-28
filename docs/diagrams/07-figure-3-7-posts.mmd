@@ -1,0 +1,97 @@
+erDiagram
+    USERS ||--o{ POSTS : authors
+    USERS ||--o{ COMMENTS : writes
+    USERS ||--o{ POST_LIKES : likes
+    USERS ||--o{ COMMENT_LIKES : likes
+    USERS ||--o{ SAVES : saves
+    USERS ||--o{ MENTIONS : "is mentioned in"
+    USERS ||--o{ REPORTS : files
+    USERS |o--o{ REPORTS : "is reported in"
+    USERS |o--o{ REPORTS : "handled by"
+    POSTS ||--o{ POST_MEDIA : shows
+    MEDIA ||--o{ POST_MEDIA : "appears in"
+    POSTS ||--o{ POST_HASHTAGS : "tagged with"
+    HASHTAGS ||--o{ POST_HASHTAGS : tags
+    POSTS ||--o{ COMMENTS : has
+    POSTS ||--o{ POST_LIKES : receives
+    POSTS ||--o{ SAVES : "is saved as"
+    POSTS |o--o{ MENTIONS : mentions
+    POSTS |o--o{ REPORTS : "is reported as"
+    POSTS }o--o| SPACES : "posted into"
+    POSTS }o--o| EVENTS : "posted about"
+    POSTS }o--o| PLACES : "tagged at"
+    COMMENTS |o--o{ COMMENTS : "replies to"
+    COMMENTS ||--o{ COMMENT_LIKES : receives
+    COMMENTS |o--o{ MENTIONS : mentions
+    COMMENTS |o--o{ REPORTS : "is reported as"
+
+    USERS {
+        uuid id PK
+    }
+    MEDIA {
+        uuid id PK
+    }
+    SPACES {
+        uuid id PK
+    }
+    EVENTS {
+        uuid id PK
+    }
+    PLACES {
+        uuid id PK
+    }
+    POSTS {
+        uuid id PK
+        uuid author_id FK
+        uuid space_id FK
+        uuid event_id FK
+        uuid place_id FK
+    }
+    POST_MEDIA {
+        uuid id PK
+        uuid post_id FK
+        uuid media_id FK
+    }
+    HASHTAGS {
+        uuid id PK
+    }
+    POST_HASHTAGS {
+        uuid id PK
+        uuid post_id FK
+        uuid hashtag_id FK
+    }
+    MENTIONS {
+        uuid id PK
+        uuid post_id FK
+        uuid comment_id FK
+        uuid user_id FK
+    }
+    COMMENTS {
+        uuid id PK
+        uuid post_id FK
+        uuid author_id FK
+        uuid parent_id FK
+    }
+    POST_LIKES {
+        uuid id PK
+        uuid post_id FK
+        uuid user_id FK
+    }
+    COMMENT_LIKES {
+        uuid id PK
+        uuid comment_id FK
+        uuid user_id FK
+    }
+    SAVES {
+        uuid id PK
+        uuid user_id FK
+        uuid post_id FK
+    }
+    REPORTS {
+        uuid id PK
+        uuid reporter_id FK
+        uuid post_id FK
+        uuid comment_id FK
+        uuid subject_user_id FK
+        uuid handled_by_id FK
+    }
